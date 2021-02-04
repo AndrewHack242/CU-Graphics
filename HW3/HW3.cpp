@@ -23,9 +23,9 @@ int obj = 0;               //  Object
 float asp = 1;             //  Aspect ratio
 float dim = 3.0;           //  Size of world
 float X = 0, Y = 0, Z = 1; //  Location of Object
-#define MODE 4
+#define MODE 6
 int shader[] = {0, 0, 0, 0, 0, 0}; //  Shaders
-const char *text[] = {"None", "Hexagons", "Tiny Hexagons", "Candy Cane", "Bricks"};
+const char *text[] = {"None", "Hexagons", "Hexagons-function", "Hexagons-if", "Hexagons-divide", "candycane"};
 
 //
 //  Refresh display
@@ -78,8 +78,25 @@ void display(GLFWwindow *window)
    case 2:
       TexturedIcosahedron(tex);
       break;
+   case 3:
+      for (int i = 0; i < 100; ++i)
+      {
+         for (int j = 0; j < 100; ++j)
+         {
+            Icosahedron(i, j, 0, 1, 0, 0, tex);
+         }
+      }
+      break;
    default:
-      TexturedTeapot(8, tex);
+      glBindTexture(GL_TEXTURE_2D, tex);
+      glEnable(GL_TEXTURE_2D);
+      glBegin(GL_QUADS);
+      glVertex3f(+1, -1, 0);
+      glVertex3f(-1, -1, 0);
+      glVertex3f(-1, +1, 0);
+      glVertex3f(+1, +1, 0);
+      glEnd();
+      glDisable(GL_TEXTURE_2D);
       break;
    }
    //  Revert to fixed pipeline
@@ -89,7 +106,7 @@ void display(GLFWwindow *window)
    //  Display parameters
    glColor3f(1, 1, 1);
    glWindowPos2i(5, 5);
-   Print("Angle=%d,%d FPS=%d Dim=%.1f Projection=%s Mode=%s",th,ph,FramesPerSecond(),dim,fov>0?"Perpective":"Orthogonal",text[mode]);
+   Print("Angle=%d,%d FPS=%d Dim=%.1f Projection=%s Mode=%s", th, ph, FramesPerSecond(), dim, fov > 0 ? "Perpective" : "Orthogonal", text[mode]);
    //  Render the scene and make it visible
    ErrCheck("display");
    glFlush();
@@ -132,7 +149,7 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
       move = 1 - move;
    //  Switch objects
    else if (key == GLFW_KEY_O)
-      obj = shift ? (obj + 3) % 4 : (obj + 1) % 4;
+      obj = shift ? (obj + 4) % 5 : (obj + 1) % 5;
    //  Switch between perspective/orthogonal
    else if (key == GLFW_KEY_P)
       fov = fov ? 0 : 57;
@@ -185,8 +202,10 @@ int main(int argc, char *argv[])
 
    //  Load shaders
    shader[1] = CreateShaderProg("Shaders/model.vert", "Shaders/hexagons.frag");
-   shader[2] = CreateShaderProg("Shaders/model.vert", "Shaders/tinyhex.frag");
-   shader[3] = CreateShaderProg("Shaders/model.vert", "Shaders/candycane.frag");
+   shader[2] = CreateShaderProg("Shaders/model.vert", "Shaders/hexagons-functions.frag");
+   shader[3] = CreateShaderProg("Shaders/model.vert", "Shaders/hexagons-if.frag");
+   shader[4] = CreateShaderProg("Shaders/model.vert", "Shaders/hexagons-divide.frag");
+   shader[5] = CreateShaderProg("Shaders/model.vert", "Shaders/candycane.frag");
    //  Load textures
    tex = LoadTexBMP("pi.bmp");
 
