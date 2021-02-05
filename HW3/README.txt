@@ -1,9 +1,9 @@
-Andrew Hack, HW2
+Andrew Hack, HW3
 
-Time spent: 3 hours
+Time spent: 5 hours
 
 compiling: make
-running: ./hw2
+running: ./hw3
 
 ----KEYBINDS
 
@@ -23,16 +23,18 @@ esc: exit program
 
 
 ----CODE REUSE:
-Code is very similar to your ex3, started as a copy. Added my own companion cubes as 
-an additional object choice, and made the required shaders.
+Code began as a re-use from HW2
 
+----Observations
+I think my computer is just too powerful, different shaders were giving different results, but modifying a shader to use ifs 
+instead of a mix or dividing over and over instead of doing it once seemingly did nothing to the fps.
+
+-spawning 1000 objects always seems to give 77 fps with a shader, but the default pipeline gives less.
+
+This leads me to believe that my fragment shader is having a miniscule impact, in fact it seemed to gain frames when I increased the resolution of the window.
+The majority of the limiting on all of the shaders seems to be coming from the vertex shader, seeing as adding more objects really impacts the performance.
+
+Honestly, the things I have seen working on this make so little sense to me that I'm beginning to think that there is some windows setting that is messing with me.
+An alternate idea is that I am somehow cpu capped, though I find this unlikely.
 
 ----OTHER NOTES:
-I created 3 procedrual textures using shaders.
-
-1) a texture with slowly moving hexagons. These Hexagons are rendered through a tequnique 
-	similar to your bricks tequnique, and yet quite a bit more detail is required to make 
-	the hexagon shapes.
-2) a smaller version of the hexagon texture that plays better with the zoom feature.
-3) The first procedrual texture that I made while making sure I understood what I was doing.
-	Simple stripe effect that moves on the y-axis.

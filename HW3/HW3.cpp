@@ -23,9 +23,9 @@ int obj = 0;               //  Object
 float asp = 1;             //  Aspect ratio
 float dim = 3.0;           //  Size of world
 float X = 0, Y = 0, Z = 1; //  Location of Object
-#define MODE 6
-int shader[] = {0, 0, 0, 0, 0, 0}; //  Shaders
-const char *text[] = {"None", "Hexagons", "Hexagons-function", "Hexagons-if", "Hexagons-divide", "candycane"};
+#define MODE 7
+int shader[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //  Shaders
+const char *text[] = {"None", "Hexagons", "Hexagons-function", "Hexagons-if", "Hexagons-divide", "candycane", "pixel phong"};
 
 //
 //  Refresh display
@@ -206,6 +206,7 @@ int main(int argc, char *argv[])
    shader[3] = CreateShaderProg("Shaders/model.vert", "Shaders/hexagons-if.frag");
    shader[4] = CreateShaderProg("Shaders/model.vert", "Shaders/hexagons-divide.frag");
    shader[5] = CreateShaderProg("Shaders/model.vert", "Shaders/candycane.frag");
+   shader[6] = CreateShaderProg("Shaders/pixel.vert", "Shaders/phong.frag");
    //  Load textures
    tex = LoadTexBMP("pi.bmp");
 
