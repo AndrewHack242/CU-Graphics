@@ -26,97 +26,6 @@ int shader[] = {0, 0}; //  Shaders
 const char *text[] = {"OpenGL 2", "OpenGL 4"};
 
 //
-//  Companion Data
-//
-unsigned int companion_vbo = 0;
-const int companion_size = 48;
-const float companion_data[] = // Vertex data
-    {
-        //  X  Y  Z  W   Nx Ny Nz    R G B A   s t
-        //  Front
-        +1, +1, +1, +1, 0, 0, +1, 1, 0, 0, 1, 1, 1,
-        -1, +1, +1, +1, 0, 0, +1, 1, 0, 0, 1, 0, 1,
-        +1, -1, +1, +1, 0, 0, +1, 1, 0, 0, 1, 1, 0,
-        -1, +1, +1, +1, 0, 0, +1, 1, 0, 0, 1, 0, 1,
-        +1, -1, +1, +1, 0, 0, +1, 1, 0, 0, 1, 1, 0,
-        -1, -1, +1, +1, 0, 0, +1, 1, 0, 0, 1, 0, 0,
-        //  Back
-        -1, -1, -1, +1, 0, 0, -1, 0, 0, 1, 1, 1, 0,
-        +1, -1, -1, +1, 0, 0, -1, 0, 0, 1, 1, 0, 0,
-        -1, +1, -1, +1, 0, 0, -1, 0, 0, 1, 1, 1, 1,
-        +1, -1, -1, +1, 0, 0, -1, 0, 0, 1, 1, 0, 0,
-        -1, +1, -1, +1, 0, 0, -1, 0, 0, 1, 1, 1, 1,
-        +1, +1, -1, +1, 0, 0, -1, 0, 0, 1, 1, 0, 1,
-        //  Right
-        +1, +1, +1, +1, +1, 0, 0, 1, 1, 0, 1, 0, 1,
-        +1, -1, +1, +1, +1, 0, 0, 1, 1, 0, 1, 0, 0,
-        +1, +1, -1, +1, +1, 0, 0, 1, 1, 0, 1, 1, 1,
-        +1, -1, +1, +1, +1, 0, 0, 1, 1, 0, 1, 0, 0,
-        +1, +1, -1, +1, +1, 0, 0, 1, 1, 0, 1, 1, 1,
-        +1, -1, -1, +1, +1, 0, 0, 1, 1, 0, 1, 1, 0,
-        //  Left
-        -1, +1, +1, +1, -1, 0, 0, 0, 1, 0, 1, 1, 1,
-        -1, +1, -1, +1, -1, 0, 0, 0, 1, 0, 1, 0, 1,
-        -1, -1, +1, +1, -1, 0, 0, 0, 1, 0, 1, 1, 0,
-        -1, +1, -1, +1, -1, 0, 0, 0, 1, 0, 1, 0, 1,
-        -1, -1, +1, +1, -1, 0, 0, 0, 1, 0, 1, 1, 0,
-        -1, -1, -1, +1, -1, 0, 0, 0, 1, 0, 1, 0, 0,
-        //  Top
-        +1, +1, +1, +1, 0, +1, 0, 0, 1, 1, 1, 1, 0,
-        +1, +1, -1, +1, 0, +1, 0, 0, 1, 1, 1, 1, 1,
-        -1, +1, +1, +1, 0, +1, 0, 0, 1, 1, 1, 0, 0,
-        +1, +1, -1, +1, 0, +1, 0, 0, 1, 1, 1, 1, 1,
-        -1, +1, +1, +1, 0, +1, 0, 0, 1, 1, 1, 0, 0,
-        -1, +1, -1, +1, 0, +1, 0, 0, 1, 1, 1, 0, 1,
-        //  Bottom
-        -1, -1, -1, +1, 0, -1, 0, 1, 0, 1, 1, 0, 0,
-        +1, -1, -1, +1, 0, -1, 0, 1, 0, 1, 1, 1, 0,
-        -1, -1, +1, +1, 0, -1, 0, 1, 0, 1, 1, 0, 1,
-        +1, -1, -1, +1, 0, -1, 0, 1, 0, 1, 1, 1, 0,
-        -1, -1, +1, +1, 0, -1, 0, 1, 0, 1, 1, 0, 1,
-        +1, -1, +1, +1, 0, -1, 0, 1, 0, 1, 1, 1, 1,
-
-        //Side panels
-        //edge
-        +0.20, +1.06, +1.01, +1, 0, 1, 1, 0, 0, 0, 1, 0.9, 0.4,
-        -0.20, +1.06, +1.01, +1, 0, 1, 1, 0, 0, 0, 1, 0.1, 0.4,
-        -0.20, +1.01, +1.06, +1, 0, 1, 1, 0, 0, 0, 1, 0.1, 0.6,
-        +0.20, +1.01, +1.06, +1, 0, 1, 1, 0, 0, 0, 1, 0.9, 0.6,
-        -0.20, +1.01, +1.06, +1, 0, 1, 1, 0, 0, 0, 1, 0.1, 0.6,
-        +0.20, +1.06, +1.01, +1, 0, 1, 1, 0, 0, 0, 1, 0.9, 0.4,
-
-        //side1
-
-        //side2
-
-        //corner seals
-        +0.20, +1.06, +1.01, +1, 1, 0, 0, 0, 0, 0, 1, 0.9, 0.4,
-        +0.20, +1.01, +1.06, +1, 1, 0, 0, 0, 0, 0, 1, 0.9, 0.6,
-        +0.20, +1.01, +1.01, +1, 1, 0, 0, 0, 0, 0, 1, 0.991, 0.4,
-
-        -0.20, +1.06, +1.01, +1, -1, 0, 0, 0, 0, 0, 1, 0.1, 0.4,
-        -0.20, +1.01, +1.01, +1, -1, 0, 0, 0, 0, 0, 1, 0.009, 0.4,
-        -0.20, +1.01, +1.06, +1, -1, 0, 0, 0, 0, 0, 1, 0.1, 0.6,
-
-        //
-};
-
-//
-//  Initialize companion VBO
-//
-void InitCompanion()
-{
-   //  Get buffer name
-   glGenBuffers(1, &companion_vbo);
-   //  Bind VBO
-   glBindBuffer(GL_ARRAY_BUFFER, companion_vbo);
-   //  Copy icosahedron to VBO
-   glBufferData(GL_ARRAY_BUFFER, sizeof(companion_data), companion_data, GL_STATIC_DRAW);
-   //  Release VBO
-   glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-//
 //  Refresh display
 //
 void display(GLFWwindow *window)
@@ -163,7 +72,7 @@ void display(GLFWwindow *window)
    //  Create Projection matrix
    glm::mat4 proj(1.0f);
    if (fov)
-      proj = glm::perspective((float)fov, asp, dim / 16, 16 * dim); //mat4perspective(proj , fov,asp,dim/16,16*dim);
+      proj = glm::perspective(glm::radians((float)fov), asp, dim / 16, 16 * dim); //mat4perspective(proj , fov,asp,dim/16,16*dim);
    else
       proj = glm::ortho(-dim * asp, +dim * asp, -dim, +dim, -dim, +dim);
    //  Create View matrix
@@ -183,25 +92,23 @@ void display(GLFWwindow *window)
    glm::mat3 normal(modelview);
    normal = glm::inverseTranspose(normal);
 
-   //  Set Projection, View, Modelview and Normal Matrix
-   id = glGetUniformLocation(shader[mode], "ProjectionMatrix");
-   glUniformMatrix4fv(id, 1, 0, &proj[0][0]);
-   id = glGetUniformLocation(shader[mode], "ViewMatrix");
-   glUniformMatrix4fv(id, 1, 0, &view[0][0]);
-   id = glGetUniformLocation(shader[mode], "ModelViewMatrix");
-   glUniformMatrix4fv(id, 1, 0, &modelview[0][0]);
-   id = glGetUniformLocation(shader[mode], "NormalMatrix");
-   glUniformMatrix3fv(id, 1, 0, &normal[0][0]);
-
-   //draw cube
-   Companion c;
-   c.display(modelview);
+   //draw cube TODO:add scene class and general object class
+   Companion c(0,0,0,1,0,270,0);
+   Companion c2(3,-.25,2.5,0.75,0,26,0);
+   Companion c3(0,1.455,0,0.4,0,45,180);
+   Companion c4(1.85,0,0,0.6,0,0,60);
+   Companion c5(3,1,2.5,0.5,0,94,0);
+   c.display(shader[mode], proj, view, modelview, normal);
+   c2.display(shader[mode], proj, view, modelview, normal);
+   c3.display(shader[mode], proj, view, modelview, normal);
+   c4.display(shader[mode], proj, view, modelview, normal);
+   c5.display(shader[mode], proj, view, modelview, normal);
 
    //  Fixed pipeline
    glUseProgram(0);
 
    //  Draw axes using fixed pipeline (white)
-   Axes(2);
+   //Axes(2);
 
    //  Display parameters
    glColor3f(1, 1, 1);
@@ -228,9 +135,6 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
    //  Reset view angle and location
    else if (key == GLFW_KEY_0)
       th = ph = 0;
-   //  Switch shaders
-   else if (key == GLFW_KEY_M)
-      mode = 1 - mode;
    //  Light movement
    else if (key == GLFW_KEY_S)
       move = 1 - move;
@@ -244,9 +148,6 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
       zh += 1;
    else if (key == GLFW_KEY_LEFT_BRACKET)
       zh -= 1;
-   //  Switch objects
-   else if (key == GLFW_KEY_O)
-      obj = 1 - obj;
    //  Switch between perspective/orthogonal
    else if (key == GLFW_KEY_P)
       fov = fov ? 0 : 57;
@@ -294,7 +195,7 @@ void reshape(GLFWwindow *window, int width, int height)
 int main(int argc, char *argv[])
 {
    //  Initialize GLFW
-   GLFWwindow *window = InitWindow("OpenGL Versions", 1, 600, 600, &reshape, &key);
+   GLFWwindow *window = InitWindow("HW4: Andrew Hack", 1, 900, 900, &reshape, &key);
 
    //  Load shaders
    shader[0] = CreateShaderProg("gl2.vert", "gl2.frag");
@@ -302,7 +203,7 @@ int main(int argc, char *argv[])
    //  Load textures
    tex = LoadTexBMP("pi.bmp");
    //  Load cube into VBO
-   InitCube();
+   InitCompanion();
 
    //  Event loop
    ErrCheck("init");

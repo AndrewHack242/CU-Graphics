@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <math.h>
+#include <stdbool.h>
 
 #ifdef USEGLEW
 #include <GL/glew.h>
@@ -46,6 +47,7 @@ void Lighting(float x,float y,float z,float ambient,float diffuse,float specular
 
 //  Load textures and OBJ files
 unsigned int LoadTexBMP(const char* file);
+unsigned int LoadTexBMP32(const char *file, bool repeat);
 int          LoadOBJ(const char* file);
 
 //  Timing/Performance
