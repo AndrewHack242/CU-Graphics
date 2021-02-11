@@ -1,0 +1,14 @@
+ex06: Opengl 4
+
+Willem A. (Vlakkies) Schreuder
+CSCI4229/5229 Spring 2021
+
+Demonstrates OpenGL 4 syntax
+
+Key bindings
+  m          Toggle shaders
+  o          Change objects
+  arrows     Change view angle
+  PgDn/PgUp  Zoom in and out
+  0          Reset view angle
+  ESC        Exit
