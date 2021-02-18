@@ -1,323 +1,431 @@
 <html>
+
 <head>
-<title>Example 7</title>
-<!--
+   <title>Andrew Hack HW5</title>
+   <link rel="stylesheet" href="slider.css">
+   <!--
   Willem A. (Vlakkies) Schreuder
   CSCI 4239/5239 Spring 2021
   -->
 
-<!--
+   <!--
   Mat4 class
   -->
-<script src="mat4.js" type="text/javascript"></script>
+   <script src="mat4.js" type="text/javascript"></script>
 
-<!--
+   <!--
   Vertex shader
   -->
-<script id="shader-vs" type="x-shader/x-vertex"> 
+   <script id="shader-vs" type="x-shader/x-vertex">
    precision highp float;
-   attribute vec3 XYZ;
-   attribute vec3 RGB;
+   attribute vec4 XYZ;
+   attribute vec3 NOR;
+   attribute vec4 RGB;
    attribute vec2 T2D;
    uniform mat4 ProjectionMatrix;
    uniform mat4 ModelviewMatrix;
-   varying vec3 col;
+   uniform mat4 ViewMatrix;
+   varying vec4 col;
    varying vec2 t2d;
+
+   uniform mat3 NormalMatrix;
+   //  Light propeties
+   uniform float isLight;
+   uniform float fov;
+   uniform vec4 Global;
+   uniform vec4 Ambient;
+   uniform vec4 Diffuse;
+   uniform vec4 Specular;
+   uniform vec4 Position;
+
    void main(void)
    {
-      col = RGB;
+      if(isLight < 0.5)
+      {
+         //  P is the vertex coordinate on body
+         vec3 P = vec3(ModelviewMatrix * XYZ);
+         //  N is the object normal at P
+         vec3 N = normalize(NormalMatrix * NOR);
+         //  L is the light vector
+         vec3 L = normalize(vec3(ViewMatrix*Position) - P);
+
+         //  Emission and ambient color
+         col = (Global+Ambient)*RGB;
+
+         //  Diffuse light intensity is cosine of light and normal vectors
+         float Id = dot(L,N);
+         if (Id>0.0)
+         {
+            //  Add diffuse - material color from Color
+            col += Id*Diffuse*RGB;
+            //  R is the reflected light vector R = 2(L.N)N - L
+            vec3 R = reflect(-L, N);
+            //  V is the view vector (eye at the origin)
+            vec3 V = (fov>0.0) ? normalize(-P) : vec3(0,0,1);
+            //  Specular is cosine of reflected and view vectors
+            //  Assert material specular color is white
+            float Is = dot(R,V);
+            if (Is>0.0) col += pow(Is,8.0)*Specular;
+         }
+      }
+      //col = RGB;
+      else{
+         col = vec4(1.0,1.0,1.0,1.0);
+      }
       t2d = T2D;
-      gl_Position = ProjectionMatrix * ModelviewMatrix * vec4(XYZ,1);
+      gl_Position = ProjectionMatrix * ModelviewMatrix * XYZ;
    }
-</script> 
- 
-<!--
+</script>
+
+   <!--
   Fragment shader
   -->
-<script id="shader-fs" type="x-shader/x-fragment"> 
+   <script id="shader-fs" type="x-shader/x-fragment">
 precision highp float;
-varying vec3 col;
+varying vec4 col;
 varying vec2 t2d;
+uniform float isLight;
 uniform sampler2D tex;
 void main(void)
 {
-   gl_FragColor = vec4(col,1)*texture2D(tex,t2d);
+   if(isLight > 0.5)
+      gl_FragColor = col;
+   else
+      gl_FragColor = col*texture2D(tex,t2d);
 }
-</script> 
+</script>
 
-<!--
+   <!--
   WebGL program
   -->
-<script type="text/javascript"> 
+   <script type="text/javascript">
+      var LH = 0;
+      //
+      //  Compile a shader
+      //
+      function CompileShader(gl, id) {
+         //  Get shader by id
+         var src = document.getElementById(id);
+         //  Create shader based on type setting
+         var shader;
+         if (src.type == "x-shader/x-fragment")
+            shader = gl.createShader(gl.FRAGMENT_SHADER);
+         else if (src.type == "x-shader/x-vertex")
+            shader = gl.createShader(gl.VERTEX_SHADER);
+         else
+            return null;
+         //  Read source into str
+         var str = "";
+         var k = src.firstChild;
+         while (k) {
+            if (k.nodeType == 3) str += k.textContent;
+            k = k.nextSibling;
+         }
+         gl.shaderSource(shader, str);
+         //  Compile the shader
+         gl.compileShader(shader);
+         //  Check for errors
+         if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) == 0)
+            alert(gl.getShaderInfoLog(shader));
+         //  Return shader
+         return shader;
+      }
 
-//
-//  Compile a shader
-//
-function CompileShader(gl,id)
-{
-   //  Get shader by id
-   var src = document.getElementById(id);
-   //  Create shader based on type setting
-   var shader;
-   if (src.type == "x-shader/x-fragment")
-      shader = gl.createShader(gl.FRAGMENT_SHADER);
-   else if (src.type == "x-shader/x-vertex")
-      shader = gl.createShader(gl.VERTEX_SHADER);
-   else
-      return null;
-   //  Read source into str
-   var str = "";
-   var k = src.firstChild;
-   while (k)
-   {
-      if (k.nodeType == 3) str += k.textContent;
-      k = k.nextSibling;
-   }
-   gl.shaderSource(shader, str);
-   //  Compile the shader
-   gl.compileShader(shader);
-   //  Check for errors
-   if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) == 0)
-      alert(gl.getShaderInfoLog(shader));
-   //  Return shader
-   return shader;
-}
+      //
+      //  Compile shader program
+      //
+      function CompileShaderProg(gl, vert, frag) {
+         //  Compile the program
+         var prog = gl.createProgram();
+         gl.attachShader(prog, CompileShader(gl, vert));
+         gl.attachShader(prog, CompileShader(gl, frag));
+         gl.linkProgram(prog);
+         //  Check for errors
+         if (gl.getProgramParameter(prog, gl.LINK_STATUS) == 0)
+            alert(gl.getProgramInfoLog(prog));
+         //  Return program
+         return prog;
+      }
 
-//
-//  Compile shader program
-//
-function CompileShaderProg(gl,vert,frag)
-{
-   //  Compile the program
-   var prog  = gl.createProgram();
-   gl.attachShader(prog , CompileShader(gl,vert));
-   gl.attachShader(prog , CompileShader(gl,frag));
-   gl.linkProgram(prog);
-   //  Check for errors
-   if (gl.getProgramParameter(prog, gl.LINK_STATUS) == 0)
-      alert(gl.getProgramInfoLog(prog));
-   //  Return program
-   return prog;
-}
+      var gl, canvas;
+      function webGLStart() {
+         //  Set canvas
+         canvas = document.getElementById("canvas");
+         //  Select canvas size
+         var size = Math.min(window.innerWidth, window.innerHeight) - 10;
+         canvas.width = size;
+         canvas.height = size;
+         //  Start WebGL
+         if (!window.WebGLRenderingContext) {
+            alert("Your browser does not support WebGL. See http://get.webgl.org");
+            return;
+         }
+         try {
+            gl = canvas.getContext("experimental-webgl");
+         }
+         catch (e) { }
+         if (!gl) {
+            alert("Can't get WebGL");
+            return;
+         }
 
-var gl,canvas;
-function webGLStart()
-{
-   //  Set canvas
-   canvas = document.getElementById("canvas");
-   //  Select canvas size
-   var size = Math.min(window.innerWidth,window.innerHeight)-10;
-   canvas.width  = size;
-   canvas.height = size;
-   //  Start WebGL
-   if (!window.WebGLRenderingContext)
-   {
-      alert("Your browser does not support WebGL. See http://get.webgl.org");
-      return;
-   }
-   try
-   {
-      gl = canvas.getContext("experimental-webgl");
-   }
-   catch(e)
-   {}
-   if (!gl)
-   {
-      alert("Can't get WebGL");
-      return;
-   }
+         //  Set viewport to entire canvas
+         gl.viewport(0, 0, size, size);
 
-   //  Set viewport to entire canvas
-   gl.viewport(0,0,size,size);
+         //  Load Shader
+         var prog = CompileShaderProg(gl, "shader-vs", "shader-fs");
 
-   //  Load Shader
-   var prog = CompileShaderProg(gl,"shader-vs","shader-fs");
+         //  Set program
+         gl.useProgram(prog);
 
-   //  Set program
-   gl.useProgram(prog);
+         //  Set projection
+         var ProjectionMatrix = new mat4();
+         var fov = 80.0
+         var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+         var zNear = 0.001
+         var zFar = 1000
+         ProjectionMatrix.perspective(fov, aspect, zNear, zFar); //perspective projection
 
-   //  Set projection
-   var ProjectionMatrix = new mat4();
-   var fov = 55
-   var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-   var zNear = 0.001
-   var zFar = 1000
-   ProjectionMatrix.perspective(fov,aspect, zNear,zFar); //perspective projection
-   ProjectionMatrix.translate(0,0,-8); //make it so that we actually look at the cube from afar
-   //ProjectionMatrix.ortho(-2.5,+2.5,-2.5,+2.5,-2.5,+2.5);
+         //ProjectionMatrix.translate(0, 0, -8); //make it so that we actually look at the cube from afar
+         //ProjectionMatrix.ortho(-2.5,+2.5,-2.5,+2.5,-2.5,+2.5);
 
-   //  Vertex array count
-   var n = 36;
-   //  Cube vertex, color and texture
-   var cube_data = 
-   [
-      -1,-1, 1,  1,0,0,   0,1,
-      +1,-1, 1,  1,0,0,   1,1,
-      -1,+1, 1,  1,0,0,   0,0,
-      -1,+1, 1,  1,0,0,   0,0,
-      +1,-1, 1,  1,0,0,   1,1,
-      +1,+1, 1,  1,0,0,   1,0,
-      +1,-1,-1,  0,0,1,   0,1,
-      -1,-1,-1,  0,0,1,   1,1,
-      +1,+1,-1,  0,0,1,   0,0,
-      +1,+1,-1,  0,0,1,   0,0,
-      -1,-1,-1,  0,0,1,   1,1,
-      -1,+1,-1,  0,0,1,   1,0,
-      +1,-1,+1,  1,1,0,   0,1,
-      +1,-1,-1,  1,1,0,   1,1,
-      +1,+1,+1,  1,1,0,   0,0,
-      +1,+1,+1,  1,1,0,   0,0,
-      +1,-1,-1,  1,1,0,   1,1,
-      +1,+1,-1,  1,1,0,   1,0,
-      -1,-1,-1,  0,1,0,   0,1,
-      -1,-1,+1,  0,1,0,   1,1,
-      -1,+1,-1,  0,1,0,   0,0,
-      -1,+1,-1,  0,1,0,   0,0,
-      -1,-1,+1,  0,1,0,   1,1,
-      -1,+1,+1,  0,1,0,   1,0,
-      -1,+1,+1,  0,1,1,   0,1,
-      +1,+1,+1,  0,1,1,   1,1,
-      -1,+1,-1,  0,1,1,   0,0,
-      -1,+1,-1,  0,1,1,   0,0,
-      +1,+1,+1,  0,1,1,   1,1,
-      +1,+1,-1,  0,1,1,   1,0,
-      -1,-1,-1,  1,0,1,   0,1,
-      +1,-1,-1,  1,0,1,   1,1,
-      -1,-1,+1,  1,0,1,   0,0,
-      -1,-1,+1,  1,0,1,   0,0,
-      +1,-1,-1,  1,0,1,   1,1,
-      +1,-1,+1,  1,0,1,   1,0,
-   ];
-   var cube = gl.createBuffer();
-   gl.bindBuffer(gl.ARRAY_BUFFER,cube);
-   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(cube_data),gl.STATIC_DRAW);
+         //  Vertex array count
+         var cube_n = 36;
+         //  Cube vertex, normal, color, and texture
+         var cube_data =
+            [
+               -1, -1, 1, 1,  0,0,1,   1, 0, 0, 1,  0, 1,
+               +1, -1, 1, 1,  0,0,1,   1, 0, 0, 1,  1, 1,
+               -1, +1, 1, 1,  0,0,1,   1, 0, 0, 1,  0, 0,
 
-   //  Set state to draw scene
-   gl.enable(gl.DEPTH_TEST);
-   gl.clearColor(0.8,0.8,0.8,1);
-   //  Mouse control variables
-   var x0 = y0 = move  = 0;
-   //  Rotation angles
-   var th = ph = 15;
+               -1, +1, 1, 1,  0,0,1,   1, 0, 0, 1,  0, 0,
+               +1, -1, 1, 1,  0,0,1,   1, 0, 0, 1,  1, 1,
+               +1, +1, 1, 1,  0,0,1,   1, 0, 0, 1,  1, 0,
 
-   //  Create and load pi texture
-   var tex = gl.createTexture();
-   var img = new Image();
-   img.src = 'pi.png';
-   img.onload = function()
-   {
-      gl.bindTexture(gl.TEXTURE_2D,tex);
-      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,img);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-      //  When loaded call Display() to refresh the screen
-      Display();
-   }
+               +1, -1, -1, 1,  0,0,-1,  1, 1, 1, 1,  0, 1,
+               -1, -1, -1, 1,  0,0,-1,  1, 1, 1, 1,  1, 1,
+               +1, +1, -1, 1,  0,0,-1,  1, 1, 1, 1,  0, 0,
 
-   //  Draw scene the first time
-   Display();
+               +1, +1, -1, 1,  0,0,-1,  1, 1, 1, 1,  0, 0,
+               -1, -1, -1, 1,  0,0,-1,  1, 1, 1, 1,  1, 1,
+               -1, +1, -1, 1,  0,0,-1,  1, 1, 1, 1,  1, 0,
 
-   //
-   //  Display the scene
-   //
-   function Display()
-   {
-      //  Clear the screen and Z buffer
-      gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+               +1, -1, +1, 1,  1,0,0,  1, 1, 0,  1, 0, 1,
+               +1, -1, -1, 1,  1,0,0,  1, 1, 0,  1, 1, 1,
+               +1, +1, +1, 1,  1,0,0,  1, 1, 0,  1, 0, 0,
 
-      // Compute modelview matrix
-      var ModelviewMatrix = new mat4();
-      ModelviewMatrix.rotate(ph,0,1,0);
-      ModelviewMatrix.rotate(th,1,0,0);
+               +1, +1, +1, 1,  1,0,0,  1, 1, 0,  1, 0, 0,
+               +1, -1, -1, 1,  1,0,0,  1, 1, 0,  1, 1, 1,
+               +1, +1, -1, 1,  1,0,0,  1, 1, 0,  1, 1, 0,
 
-      // Set shader
-      gl.useProgram(prog);
+               -1, -1, -1, 1,  -1,0,0,  0, 1, 0, 1,  0, 1,
+               -1, -1, +1, 1,  -1,0,0,  0, 1, 0, 1,  1, 1,
+               -1, +1, -1, 1,  -1,0,0,  0, 1, 0, 1,  0, 0,
 
-      //  Set projection and modelview matrixes
-      gl.uniformMatrix4fv(gl.getUniformLocation(prog,"ProjectionMatrix") , false , ProjectionMatrix.getMat());
-      gl.uniformMatrix4fv(gl.getUniformLocation(prog,"ModelviewMatrix")  , false , ModelviewMatrix.getMat());
+               -1, +1, -1, 1,  -1,0,0,  0, 1, 0, 1,  0, 0,
+               -1, -1, +1, 1,  -1,0,0,  0, 1, 0, 1,  1, 1,
+               -1, +1, +1, 1,  -1,0,0,  0, 1, 0, 1,  1, 0,
 
-      //  Bind cube buffer
-      gl.bindBuffer(gl.ARRAY_BUFFER,cube);
-      //  Set up 3D vertex array
-      var XYZ = gl.getAttribLocation(prog,"XYZ");
-      gl.enableVertexAttribArray(XYZ);
-      gl.vertexAttribPointer(XYZ,3,gl.FLOAT,false,32,0);
-      //  Set up 3D color array
-      var RGB = gl.getAttribLocation(prog,"RGB");
-      gl.enableVertexAttribArray(RGB);
-      gl.vertexAttribPointer(RGB,3,gl.FLOAT,false,32,12);
-      //  Set up 2D texture array
-      var T2D = gl.getAttribLocation(prog,"T2D");
-      gl.enableVertexAttribArray(T2D);
-      gl.vertexAttribPointer(T2D,2,gl.FLOAT,false,32,24);
+               -1, +1, +1, 1,  0,1,0,  0, 1, 1,  1, 0, 1,
+               +1, +1, +1, 1,  0,1,0,  0, 1, 1,  1, 1, 1,
+               -1, +1, -1, 1,  0,1,0,  0, 1, 1,  1, 0, 0,
 
-      //  Draw all vertexes
-      gl.drawArrays(gl.TRIANGLES,0,n);
+               -1, +1, -1, 1,  0,1,0,  0, 1, 1,  1, 0, 0,
+               +1, +1, +1, 1,  0,1,0,  0, 1, 1,  1, 1, 1,
+               +1, +1, -1, 1,  0,1,0,  0, 1, 1,  1, 1, 0,
 
-      //  Disable vertex arrays
-      gl.disableVertexAttribArray(XYZ);
-      gl.disableVertexAttribArray(RGB);
-      gl.disableVertexAttribArray(T2D);
+               -1, -1, -1, 1,  0,-1,0,  1, 0, 1, 1,  0, 1,
+               +1, -1, -1, 1,  0,-1,0,  1, 0, 1, 1,  1, 1,
+               -1, -1, +1, 1,  0,-1,0,  1, 0, 1, 1,  0, 0,
 
-      //  Flush
-      gl.flush ();
-   }
+               -1, -1, +1, 1,  0,-1,0,  1, 0, 1, 1,  0, 0,
+               +1, -1, -1, 1,  0,-1,0,  1, 0, 1, 1,  1, 1,
+               +1, -1, +1, 1,  0,-1,0,  1, 0, 1, 1,  1, 0,
+            ];
+         var cube = gl.createBuffer();
+         gl.bindBuffer(gl.ARRAY_BUFFER, cube);
+         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(cube_data), gl.STATIC_DRAW);
 
-   //
-   //  Resize canvas
-   //
-   canvas.resize = function ()
-   {
-      var size = Math.min(window.innerWidth, window.innerHeight)-10;
-      canvas.width  = size;
-      canvas.height = size;
-      gl.viewport(0,0,size,size);
-      Display();
-   }
+         //  Set state to draw scene
+         gl.enable(gl.DEPTH_TEST);
+         gl.clearColor(0.8, 0.8, 0.8, 1);
+         //  Mouse control variables
+         var x0 = y0 = move = 0;
+         //  Rotation angles
+         var th = ph = 0;
 
-   //
-   //  Mouse button pressed
-   //
-   canvas.onmousedown = function (ev)
-   {
-      move  = 1;
-      x0 = ev.clientX;
-      y0 = ev.clientY;
-   }
+         //  Create and load pi texture
+         var tex = gl.createTexture();
+         var img = new Image();
+         img.src = 'cubeside.bmp';
+         img.onload = function () {
+            gl.bindTexture(gl.TEXTURE_2D, tex);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            //  When loaded call Display() to refresh the screen
+            //Display();
+         }
 
-   //
-   //  Mouse button released
-   //
-   canvas.onmouseup = function (ev)
-   {
-      move  = 0;
-   }
+         //  Draw scene the first time
+         Display();
 
-   //
-   //  Mouse movement
-   //
-   canvas.onmousemove = function (ev)
-   {
-      if (move==0) return;
-      //  Update angles
-      ph -= ev.clientX-x0;
-      th += ev.clientY-y0;
-      //  Store location
-      x0 = ev.clientX;
-      y0 = ev.clientY;
-      //  Redisplay
-      Display();
-   }
-}
-</script> 
+         //
+         //  Display the scene
+         //
+         function Display() {
+            //  Clear the screen and Z buffer
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+            
+            var d = new Date();
+            var ms = d.getTime();
 
-<!--
+            var global = [0.1, 0.1, 0.1, 1.0];
+            var ambient = [0.3, 0.3, 0.3, 1.0];
+            var diffuse = [0.9, 0.9, 0.9, 1.0];
+            var specular = [1.0, 1.0, 1.0, 1.0];
+            var position = [(3 * Math.cos((ms * Math.PI/180)/6)), LH, (3 * Math.sin((ms * Math.PI/180)/6)), 1.0];
+
+            // Compute modelview matrix
+            var ViewMatrix = new mat4();
+            ViewMatrix.lookAt(0,0,-8, 0,0,0, 0,1,0);
+            var ModelviewMatrix = ViewMatrix;
+            ModelviewMatrix.rotate(ph, 0, 1, 0);
+            ModelviewMatrix.rotate(th, 1, 0, 0);
+            ModelviewMatrix.mat[0];
+
+            var NormalMatrix = [ModelviewMatrix.mat[0], ModelviewMatrix.mat[1], ModelviewMatrix.mat[2],   
+               ModelviewMatrix.mat[4], ModelviewMatrix.mat[5], ModelviewMatrix.mat[6],   
+               ModelviewMatrix.mat[8], ModelviewMatrix.mat[9], ModelviewMatrix.mat[10]];
+
+            // Set shader
+            gl.useProgram(prog);
+            var isLight = 0.0;
+
+            //  Set projection and modelview matrixes
+            gl.uniform1f(gl.getUniformLocation(prog,"isLight"), isLight);
+            gl.uniformMatrix4fv(gl.getUniformLocation(prog, "ProjectionMatrix"), false, ProjectionMatrix.getMat());
+            gl.uniformMatrix3fv(gl.getUniformLocation(prog, "NormalMatrix"), false, new Float32Array(NormalMatrix));
+            gl.uniformMatrix4fv(gl.getUniformLocation(prog, "ViewMatrix"), false, ViewMatrix.getMat());
+            gl.uniformMatrix4fv(gl.getUniformLocation(prog, "ModelviewMatrix"), false, ModelviewMatrix.getMat());
+            gl.uniform4fv(gl.getUniformLocation(prog, "Global"), global);
+            gl.uniform4fv(gl.getUniformLocation(prog, "Ambient"), ambient);
+            gl.uniform4fv(gl.getUniformLocation(prog, "Diffuse"), diffuse);
+            gl.uniform4fv(gl.getUniformLocation(prog, "Specular"), specular);
+            gl.uniform4fv(gl.getUniformLocation(prog, "Position"), position);
+            gl.uniform1f(gl.getUniformLocation(prog, "fov"), fov);
+
+            //  Bind cube buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER, cube);
+            //  Set up 3D vertex array
+            var XYZ = gl.getAttribLocation(prog, "XYZ");
+            gl.enableVertexAttribArray(XYZ);
+            gl.vertexAttribPointer(XYZ, 4, gl.FLOAT, false, 52, 0);
+            //  Set up 3D NORMAL array
+            var NOR = gl.getAttribLocation(prog, "NOR"); //added for lighting
+            gl.enableVertexAttribArray(NOR);
+            gl.vertexAttribPointer(NOR, 3, gl.FLOAT, false, 52, 16);
+            //  Set up 3D color array
+            var RGB = gl.getAttribLocation(prog, "RGB");
+            gl.enableVertexAttribArray(RGB);
+            gl.vertexAttribPointer(RGB, 4, gl.FLOAT, false, 52, 28);
+            //  Set up 2D texture array
+            var T2D = gl.getAttribLocation(prog, "T2D");
+            gl.enableVertexAttribArray(T2D);
+            gl.vertexAttribPointer(T2D, 2, gl.FLOAT, false, 52, 44);
+
+            //  Draw all vertexes
+            gl.drawArrays(gl.TRIANGLES, 0, cube_n);
+
+
+            //do the light
+            isLight = 1.0;
+            gl.uniform1f(gl.getUniformLocation(prog,"isLight"), isLight);
+            ModelviewMatrix.translate(position[0], position[1], position[2]);
+            ModelviewMatrix.scale(0.1,0.1,0.1);
+            
+            gl.uniformMatrix4fv(gl.getUniformLocation(prog, "ModelviewMatrix"), false, ModelviewMatrix.getMat());
+
+            gl.drawArrays(gl.TRIANGLES,0,cube_n);
+
+            //  Disable vertex arrays
+            gl.disableVertexAttribArray(XYZ);
+            gl.disableVertexAttribArray(NOR);
+            gl.disableVertexAttribArray(RGB);
+            gl.disableVertexAttribArray(T2D);
+
+            window.requestAnimationFrame(Display);
+            //  Flush
+            gl.flush();
+         }
+
+         //
+         //  Resize canvas
+         //
+         canvas.resize = function () {
+            var size = Math.min(window.innerWidth, window.innerHeight) - 10;
+            canvas.width = size;
+            canvas.height = size;
+            gl.viewport(0, 0, size, size);
+            //Display();
+         }
+
+         //
+         //  Mouse button pressed
+         //
+         canvas.onmousedown = function (ev) {
+            move = 1;
+            x0 = ev.clientX;
+            y0 = ev.clientY;
+         }
+
+         //
+         //  Mouse button released
+         //
+         canvas.onmouseup = function (ev) {
+            move = 0;
+         }
+
+         //
+         //  Mouse movement
+         //
+         canvas.onmousemove = function (ev) {
+            if (move == 0) return;
+            //  Update angles
+            ph -= ev.clientX - x0;
+            th += ev.clientY - y0;
+            //  Store location
+            x0 = ev.clientX;
+            y0 = ev.clientY;
+            //  Redisplay
+            //Display();
+         }
+      }
+
+   </script>
+
+   <!--
   Web page
   -->
 </head>
-<body onload="webGLStart();" onresize="canvas.resize();"> 
-<H1>Andrew Hack Homework 5: WebGL</H1>
-<canvas id="canvas" width="500" height="500"></canvas> 
+
+<body onload="webGLStart();" onresize="canvas.resize();">
+   <H1>Andrew Hack Homework 5: WebGL</H1>
+   <div class="canvascontainer">
+      <canvas id="canvas" class = "webglcanvas"></canvas>
+   </div>
+   <div class="slidecontainer">
+      <input type="range" min="1" max="100" value="50" class="slider" id="lightSlider" orient = "vertical">
 </body>
+
+<script>
+   var slider = document.getElementById("lightSlider");
+
+slider.oninput = function()
+{
+   LH = slider.value/20 - 2.5;
+}
+
+   </script>
+
 </html>
