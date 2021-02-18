@@ -1,0 +1,14 @@
+ex09: Real Time Image processing
+
+Willem A. (Vlakkies) Schreuder
+CSCI4239/5239 Spring 2021
+
+Demonstrates post-processing of video images
+
+Key bindings
+  m          Toggle shader
+  o          Change objects
+  arrows     Change location
+  PgDn/PgUp  Zoom in and out
+  0          Reset view angle
+  ESC        Exit
