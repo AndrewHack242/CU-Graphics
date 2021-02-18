@@ -138,7 +138,13 @@ function webGLStart()
 
    //  Set projection
    var ProjectionMatrix = new mat4();
-   ProjectionMatrix.ortho(-2.5,+2.5,-2.5,+2.5,-2.5,+2.5);
+   var fov = 55
+   var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+   var zNear = 0.001
+   var zFar = 1000
+   ProjectionMatrix.perspective(fov,aspect, zNear,zFar); //perspective projection
+   ProjectionMatrix.translate(0,0,-8); //make it so that we actually look at the cube from afar
+   //ProjectionMatrix.ortho(-2.5,+2.5,-2.5,+2.5,-2.5,+2.5);
 
    //  Vertex array count
    var n = 36;
