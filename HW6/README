@@ -1,0 +1,14 @@
+ex08: Image processing
+
+Willem A. (Vlakkies) Schreuder
+CSCI4239/5239 Spring 2021
+
+Demonstrates post-processing of an image
+
+Key bindings
+  m          Toggle shader
+  o          Change objects
+  arrows     Change view angle
+  PgDn/PgUp  Zoom in and out
+  0          Reset view angle
+  ESC        Exit
