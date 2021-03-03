@@ -11,7 +11,8 @@
  *  ESC        Exit
  */
 #include "CSCIx239.h"
-int mode=0;    //  Shader
+int tex;
+int mode=3;    //  Shader
 int N=1;       //  Number of passes
 int th=0,ph=0; //  View angles
 int fov=57;    //  Field of view (for perspective)
@@ -19,31 +20,54 @@ float asp=1;   //  Aspect ratio
 float dim=3;   //  Size of world
 int obj;       //  Cruiser object
 int toon;      //  Toon shader
-unsigned int depthbuf=0;  //  Depth buffer
-unsigned int img[2];      //  Image textures
-unsigned int framebuf[2]; //  Frame buffers
-#define MODE 9
+unsigned int depthbuf[4];  //  Depth buffer
+unsigned int img[5];      //  Image textures
+unsigned int framebuf[5]; //  Frame buffers
+#define MODE 4
 int shader[MODE] = {0};   //  Shader programs
-const char* text[] = {"No Shader","Copy","Sharpen","Blur","Erosion","Dilation","Laplacian","Prewitt","Sobel"};
+const char* text[] = {"No Shader","Anti-Aliasing (MSAA) w/ copy","Anti-Aliasing (SSAA)","MSAA + SSAA"};
 
 //
 //  Refresh display
 //
 void display(GLFWwindow* window)
 {
+   int width, height;
+   glfwGetFramebufferSize(window,&width,&height);
    //  Send all output to frame buffer 0
-   if (mode) glBindFramebuffer(GL_FRAMEBUFFER,framebuf[0]);
+   glViewport(0,0, width,height);
+   glEnable(GL_MULTISAMPLE);
+   if (mode == 2) //use framebuffer of 2x
+   {
+      glBindFramebuffer(GL_FRAMEBUFFER,framebuf[2]);
+      glViewport(0,0, 2*width,2*height);
+   }
+   else if (mode == 1)
+   {
+      glBindFramebuffer(GL_FRAMEBUFFER,framebuf[3]);
+   }
+   else if(mode == 3)
+   {
+      glBindFramebuffer(GL_FRAMEBUFFER,framebuf[4]);
+      glViewport(0,0,2*width,2*height);
+   }
+   else if (mode)
+   {
+      glBindFramebuffer(GL_FRAMEBUFFER,framebuf[0]);
+   }
    //  Erase the window and the depth buffer
-   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
    //  Enable Z-buffering in OpenGL
    glEnable(GL_DEPTH_TEST);
+
    //  Set projection and view
    Projection(fov,asp,dim);
    View(th,ph,fov,dim);
 
 
-   //  Cube
-   Cube(-1,1,0 , 0.5,0.5,0.5 , 0,0 , 0);
+   //  
+   Cube(-1.3,1.3,0 , 1,1,1 , 0,0 , tex);
    //  Teapot
    glUseProgram(toon);
    float zh = fmod(90*glfwGetTime(),360);
@@ -62,6 +86,12 @@ void display(GLFWwindow* window)
    glPopMatrix();
 
    //  Draw axes using fixed pipeline (white)
+   if(mode == 2 || mode == 3)
+   {
+      glLineWidth(2);
+   }
+   else
+      glLineWidth(1);
    Axes(2);
 
    //  Ping-Pong between framebuffers
@@ -89,11 +119,33 @@ void display(GLFWwindow* window)
       {
          //  Output to alternate framebuffers
          //  Final output is to screen
-         glBindFramebuffer(GL_FRAMEBUFFER,i==N-1?0:framebuf[(i+1)%2]);
+         if(mode == 2 || mode == 1 || mode == 3)
+            glBindFramebuffer(GL_FRAMEBUFFER,0);
+         else
+            glBindFramebuffer(GL_FRAMEBUFFER,i==N-1?0:framebuf[(i+1)%2]);
          //  Clear the screen
          glClear(GL_COLOR_BUFFER_BIT);
          //  Input image is from the last framebuffer
-         glBindTexture(GL_TEXTURE_2D,img[i%2]);
+         if(mode == 2)
+            glBindTexture(GL_TEXTURE_2D,img[2]);
+         else if (mode == 1)
+         {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuf[3]);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuf[0]);
+            glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindTexture(GL_TEXTURE_2D,img[0]);
+            glBindFramebuffer(GL_FRAMEBUFFER,0);
+         }
+         else if (mode == 3)
+         {
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuf[4]);
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, framebuf[2]);
+            glBlitFramebuffer(0, 0, 2*width, 2*height, 0, 0, 2*width, 2*height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            glBindTexture(GL_TEXTURE_2D,img[2]);
+            glBindFramebuffer(GL_FRAMEBUFFER,0);
+         }
+         else
+            glBindTexture(GL_TEXTURE_2D,img[i%2]);
          //  Redraw the screen
          glBegin(GL_QUADS);
          glTexCoord2f(0,0); glVertex2f(-1,-1);
@@ -104,13 +156,14 @@ void display(GLFWwindow* window)
       }
       //  Disable textures and shaders
       glDisable(GL_TEXTURE_2D);
+      glDisable(GL_MULTISAMPLE);
       glUseProgram(0);
    }
 
    //  Display parameters
    glColor3f(1,1,1);
    glWindowPos2i(5,5);
-   Print("Angle=%d,%d  Dim=%.1f Projection=%s Mode=%s Passes=%d",th,ph,dim,fov>0?"Perpective":"Orthogonal",text[mode],N);
+   Print("Angle=%d,%d  Dim=%.1f Projection=%s Mode=%s",th,ph,dim,fov>0?"Perpective":"Orthogonal",text[mode]);
    //  Render the scene and make it visible
    ErrCheck("display");
    glFlush();
@@ -131,17 +184,26 @@ void key(GLFWwindow* window,int key,int scancode,int action,int mods)
    //  Exit on ESC
    if (key == GLFW_KEY_ESCAPE)
      glfwSetWindowShouldClose(window,1);
-   //  Reset view angle
-   else if (key==GLFW_KEY_0)
-      th = ph = 0;
    //  Switch shaders
    else if (key==GLFW_KEY_M)
+   {
       mode = shift ? (mode+MODE-1)%MODE : (mode+1)%MODE;
+      if(mode == 2)
+         N = 1;
+   }
    //  Number of passes
    else if ((key==GLFW_KEY_KP_SUBTRACT || key==GLFW_KEY_MINUS) && N>1)
+   {
       N --;
+      if(mode == 2)
+         N = 1;
+   }
    else if (key==GLFW_KEY_KP_ADD || key==GLFW_KEY_EQUAL)
+   {
       N++;
+      if(mode == 2)
+         N = 1;
+   }
    //  Switch objects
    else if (key==GLFW_KEY_O)
       obj = 1-obj;
@@ -164,6 +226,14 @@ void key(GLFWwindow* window,int key,int scancode,int action,int mods)
    //  PageDown key - decrease dim
    else if (key==GLFW_KEY_PAGE_UP && dim>1)
       dim -= 0.1;
+   else if(key == '1')
+      mode = 0;
+   else if(key == '2')
+      mode = 1;
+   else if(key == '3')
+      mode = 2;
+   else if(key == '4')
+      mode = 3;
    //  Wrap angles
    th %= 360;
    ph %= 360;
@@ -185,16 +255,16 @@ void reshape(GLFWwindow* window,int width,int height)
    //  Typically the same size as the screen (W,H) but can be larger or smaller
    //
    //  Delete old frame buffer, depth buffer and texture
-   if (depthbuf)
+   if (depthbuf[0])
    {
-      glDeleteRenderbuffers(1,&depthbuf);
-      glDeleteTextures(2,img);
-      glDeleteFramebuffers(2,framebuf);
+      glDeleteRenderbuffers(4,depthbuf);
+      glDeleteTextures(5,img);
+      glDeleteFramebuffers(5,framebuf);
    }
    //  Allocate two textures, two frame buffer objects and a depth buffer
-   glGenFramebuffers(2,framebuf);   
-   glGenTextures(2,img);
-   glGenRenderbuffers(1,&depthbuf);   
+   glGenFramebuffers(5,framebuf);   
+   glGenTextures(5,img);
+   glGenRenderbuffers(4,depthbuf);   
    //  Allocate and size texture
    for (int k=0;k<2;k++)
    {
@@ -210,13 +280,67 @@ void reshape(GLFWwindow* window,int width,int height)
       //  Bind depth buffer to frame buffer 0
       if (k==0)
       {
-         glBindRenderbuffer(GL_RENDERBUFFER,depthbuf);
+         glBindRenderbuffer(GL_RENDERBUFFER,depthbuf[0]);
          glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width,height);
-         glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuf);
+         glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuf[0]);
       }
    }
+
+   //SSAA
+   glBindTexture(GL_TEXTURE_2D,img[2]);
+   glTexImage2D(GL_TEXTURE_2D,0,3,width*2,height*2,0,GL_RGB,GL_UNSIGNED_BYTE,NULL);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+   //  Bind frame buffer to texture
+   glBindFramebuffer(GL_FRAMEBUFFER,framebuf[2]);
+   glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,img[2],0);
+   //  Bind depth buffer to frame buffer 0
+   glBindRenderbuffer(GL_RENDERBUFFER,depthbuf[1]);
+   glRenderbufferStorage(GL_RENDERBUFFER,GL_DEPTH_COMPONENT24,width*2,height*2);
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuf[1]);
    //  Switch back to regular display buffer
    glBindFramebuffer(GL_FRAMEBUFFER,0);
+
+   //MSAA
+   glBindTexture(GL_TEXTURE_2D_MULTISAMPLE,img[3]);
+   glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,4, GL_RGB, width, height, GL_TRUE);
+
+   //  Bind frame buffer to texture
+   glBindFramebuffer(GL_FRAMEBUFFER,framebuf[3]);
+   glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D_MULTISAMPLE,img[3],0);
+   //  Bind depth buffer to frame buffer 0
+   glBindRenderbuffer(GL_RENDERBUFFER,depthbuf[2]);
+   glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4,GL_DEPTH24_STENCIL8,width,height);
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuf[2]);
+
+   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+   {
+      printf("BAD\n");
+   }
+
+   //MSAA x SSAA
+   glBindTexture(GL_TEXTURE_2D_MULTISAMPLE,img[4]);
+   glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,4, GL_RGB, width*2, height*2, GL_TRUE);
+
+   //  Bind frame buffer to texture
+   glBindFramebuffer(GL_FRAMEBUFFER,framebuf[4]);
+   glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D_MULTISAMPLE,img[4],0);
+   //  Bind depth buffer to frame buffer 0
+   glBindRenderbuffer(GL_RENDERBUFFER,depthbuf[3]);
+   glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4,GL_DEPTH24_STENCIL8,width*2,height*2);
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_RENDERBUFFER,depthbuf[3]);
+
+   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+   {
+      printf("BAD\n");
+   }
+   
+
+   //  Switch back to regular display buffer
+   glBindFramebuffer(GL_FRAMEBUFFER,0);
+
    ErrCheck("Framebuffer");
 }
 
@@ -226,21 +350,20 @@ void reshape(GLFWwindow* window,int width,int height)
 int main(int argc,char* argv[])
 {
    //  Initialize GLFW
+   glfwWindowHint(GLFW_SAMPLES, 4);
    GLFWwindow* window = InitWindow("Image Processing",1,600,600,&reshape,&key);
 
    //  Load shaders
-   shader[1] = CreateShaderProg(NULL,"copy.frag");
-   shader[2] = CreateShaderProg(NULL,"sharpen.frag");
-   shader[3] = CreateShaderProg(NULL,"blur.frag");
-   shader[4] = CreateShaderProg(NULL,"erosion.frag");
-   shader[5] = CreateShaderProg(NULL,"dilation.frag");
-   shader[6] = CreateShaderProg(NULL,"laplacian.frag");
-   shader[7] = CreateShaderProg(NULL,"prewitt.frag");
-   shader[8] = CreateShaderProg(NULL,"sobel.frag");
+   shader[1] = CreateShaderProg(NULL,"shaders/copy.frag"); //MSAA
+   shader[2] = CreateShaderProg(NULL,"shaders/test.frag"); //SSAA
+   shader[3] = CreateShaderProg(NULL,"shaders/test.frag"); //BOTH
+   
    //  Toon shader for teapot
-   toon = CreateShaderProg("toon.vert","toon.frag");
+   toon = CreateShaderProg("shaders/toon.vert","shaders/toon.frag");
    //  Load object
    obj = LoadOBJ("cruiser.obj");
+
+   tex = LoadTexBMP32("cubetex.bmp", false);
 
    //  Event loop
    ErrCheck("init");
