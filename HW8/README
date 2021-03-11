@@ -1,15 +1,29 @@
-ex16: Particle Shaders
+Andrew Hack, HW8
 
-Willem A. (Vlakkies) Schreuder
-CSCI4239/5239 Spring 2021
+Time spent: 2 hours
 
-Demonstrate a small particle shader using the Orange Book confetti cannon
-and a large particle shader using the bambi fire.
+compiling: make
+running: ./hw8
 
-Key bindings
-  m/M        Toggle between particle shaders
-  a          Toggle axes
-  arrows     Change view angle
-  PgDn/PgUp  Zoom in and out
-  0          Reset view angle
-  ESC        Exit
+----KEYBINDS
+
+page up & page down: change dimensions of space
+
+arrow keys: rotate around center
+
+m: change shaders
+
+esc: exit program
+
+
+----CODE REUSE:
+Code began as ex16
+
+----OTHER NOTES:
+hit m to see both of my creations
+
+Swirl: particles of random color spin around the center, falling at constant rate towards the center. 
+After reaching the center, they start again at the outside. particles also fade as they approach the center
+
+Black Hole: like swirl, but one color and particles speed up their fall as they approach the center. Also implemented a gap in the middle that renders no particles
+

@@ -16,23 +16,24 @@
 int axes=1;       //  Display axes
 int mode=0;       //  Shader mode
 int th=0;         //  Azimuth of view angle
-int ph=0;         //  Elevation of view angle
+int ph=50;         //  Elevation of view angle
 int n;            //  Particle count
 double asp=1;     //  Aspect ratio
-double dim=3.0;   //  Size of world
+double dim=4.5;   //  Size of world
+float timelen = 10.0;
 #define MODE 2
 int shader[MODE] = {0,0}; //  Shader programs
-const char* text[] = {"Confetti Cannon","Fire"};
+const char* text[] = {"Swirl","Black Hole"};
 
 //  Set up attribute array indexes for program
 #define VELOCITY_ARRAY   4
 #define START_ARRAY 5
-static char* Name[] = {"","","","","Vel","Start",NULL};
+static char* Name[] = {"","","","","Initang","Start",NULL};
 //  Point arrays
 #define N 100
 float Vert[3*N*N];
 float Color[3*N*N];
-float Vel[3*N*N];
+float Initang[N*N];
 float Start[N*N];
 
 //
@@ -49,13 +50,16 @@ static float frand(float rng,float off)
 void InitPart(void)
 {
    //  Array Pointers
-   float* vert  = Vert;
-   float* color = Color;
-   float* vel   = Vel;
-   float* start = Start;
+   float* vert    = Vert;
+   float* color   = Color;
+   float* initang = Initang;
+   float* start   = Start;
+   
+   if(mode == 1) {timelen = 5;}
+   else{timelen = 10;}
    //  Loop over NxN patch
    int i,j;
-   n = mode ? 15 : N;
+   n = N;
    for (i=0;i<n;i++)
       for (j=0;j<n;j++)
       {
@@ -68,11 +72,9 @@ void InitPart(void)
          *color++ = frand(0.5,0.5);
          *color++ = frand(0.5,0.5);
          //  Velocity
-         *vel++ = frand( 1.0,3.0);
-         *vel++ = frand(10.0,0.0);
-         *vel++ = frand( 1.0,3.0);
+         *initang++ = frand(360.0,0.0);
          //  Launch time
-         *start++ = frand(2.0,0.0);
+         *start++ = frand(timelen,0.0);
       }
 }
 
@@ -82,37 +84,24 @@ void InitPart(void)
 void DrawPart(void)
 {
    //  Set particle size
-   glPointSize(mode?50:2);
+   glPointSize(2);
    //  Point vertex location to local array Vert
    glVertexPointer(3,GL_FLOAT,0,Vert);
    //  Point color array to local array Color
    glColorPointer(3,GL_FLOAT,0,Color);
    //  Point attribute arrays to local arrays
-   glVertexAttribPointer(VELOCITY_ARRAY,3,GL_FLOAT,GL_FALSE,0,Vel);
+   glVertexAttribPointer(VELOCITY_ARRAY,1,GL_FLOAT,GL_FALSE,0,Initang);
    glVertexAttribPointer(START_ARRAY,1,GL_FLOAT,GL_FALSE,0,Start);
    //  Enable arrays used by DrawArrays
    glEnableClientState(GL_VERTEX_ARRAY);
    glEnableClientState(GL_COLOR_ARRAY);
    glEnableVertexAttribArray(VELOCITY_ARRAY);
    glEnableVertexAttribArray(START_ARRAY);
-   //  Set transparent large particles
-   if (mode)
-   {
-      glEnable(GL_POINT_SPRITE);
-      glTexEnvi(GL_POINT_SPRITE,GL_COORD_REPLACE,GL_TRUE);
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-      glDepthMask(0);
-   }
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA,GL_ONE);
    //  Draw arrays
    glDrawArrays(GL_POINTS,0,n*n);
-   //  Reset
-   if (mode)
-   {
-      glDisable(GL_POINT_SPRITE);
-      glDisable(GL_BLEND);
-      glDepthMask(1);
-   }
+   glDisable(GL_BLEND);
    //  Disable arrays
    glDisableClientState(GL_VERTEX_ARRAY);
    glDisableClientState(GL_COLOR_ARRAY);
@@ -140,6 +129,8 @@ void display(GLFWwindow* window)
    //  Set time
    int id = glGetUniformLocation(shader[mode],"time");
    glUniform1f(id,glfwGetTime());
+   id = glGetUniformLocation(shader[mode],"length");
+   glUniform1f(id,timelen);
    id = glGetUniformLocation(shader[mode],"Noise3D");
    glUniform1i(id,1);
    id = glGetUniformLocation(shader[mode],"img");
@@ -152,7 +143,7 @@ void display(GLFWwindow* window)
    glUseProgram(0);
 
    //  Draw axes - no lighting from here on
-   if (axes) Axes(2);
+   //if (axes) Axes(2);
    //  Display parameters
    glWindowPos2i(5,5);
    Print("FPS=%d Dim=%.1f Mode=%s",
@@ -236,11 +227,11 @@ void reshape(GLFWwindow* window,int width,int height)
 int main(int argc,char* argv[])
 {
    //  Initialize GLFW
-   GLFWwindow* window = InitWindow("Particle Shaders",1,800,600,&reshape,&key);
+   GLFWwindow* window = InitWindow("Andrew Hack: HW8",1,1600,800,&reshape,&key);
 
    //  Confetti Cannon needs no fragment shader, but adds Vel and Start
-   shader[0] = CreateShaderProgAttr("confetti.vert",NULL,Name);
-   shader[1] = CreateShaderProgAttr("fire.vert","fire.frag",Name);
+   shader[0] = CreateShaderProgAttr("swirl.vert",NULL,Name);
+   shader[1] = CreateShaderProgAttr("suck.vert",NULL,Name);
    //  Load random texture
    CreateNoise3D(GL_TEXTURE1);
    //  Load smoke particle
