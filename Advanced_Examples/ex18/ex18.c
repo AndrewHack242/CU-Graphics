@@ -30,6 +30,7 @@ int move=1;       //  Move light
 float asp=1;      //  Screen aspect ratio
 float dim=2;      //  World dimension
 float elv=-10;    //  Light elevation
+int lines = 0;
 unsigned int vao; //  Icosahedron VAO
 
 //
@@ -64,6 +65,8 @@ void display(GLFWwindow* window)
    glUniformMatrix4fv(id,1,0,modelview);
    id = glGetUniformLocation(shader,"NormalMatrix");
    glUniformMatrix3fv(id,1,0,normal);
+   id = glGetUniformLocation(shader,"lines");
+   glUniform1i(id,lines);
 
    //  Controls for tesselation level
    id = glGetUniformLocation(shader,"Inner");
@@ -131,6 +134,11 @@ void key(GLFWwindow* window,int key,int scancode,int action,int mods)
    {
       Inner = 3;
       Outer = 2;
+   }
+   //toggle lines
+   else if (key == GLFW_KEY_L)
+   {
+      lines = lines ? 0 : 1;
    }
    //  Both levels
    else if (key==GLFW_KEY_KP_ADD || key==GLFW_KEY_EQUAL)
