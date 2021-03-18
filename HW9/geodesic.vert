@@ -8,5 +8,5 @@ out vec3 vPosition;
 void main()
 {
    //  Coordinate passthrough
-   vPosition = Position.xyz;
+   vPosition = Position.xyz / Position.w;
 }

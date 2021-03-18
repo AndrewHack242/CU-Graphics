@@ -1,20 +1,42 @@
-ex18: Geodesic Sphere
+Andrew Hack, HW9
 
-Willem A. (Vlakkies) Schreuder
-CSCI4239/5239 Spring 2021
+Time spent: 8 hours
 
-This program requires OpenGL 4.0 or above
-Demonstrate a tesselation shader by drawing a sphere
-from an icosahedron.
-Based on The Little Grashopper tutorial
-http://prideout.net/blog/?p=48
+compiling: make
+running: ./hw9
 
-Key bindings
-  +/-        Increase/decrease inner and outer
-  i/I        Increase/decrease inner
-  o/O        Increase/decrease outer
-  r          Reset inner/outer levels
-  arrows     Change view angle
-  PgDn/PgUp  Zoom in and out
-  0          Reset view angle
-  ESC        Exit
+----KEYBINDS
+
+page up & page down: change dimensions of space
+
+arrow keys: rotate Object
+
+w/s: move object closer or farther
+
+p: switch perspective (good for getting a look at a far away object close-up)
+
+l: toggle lines on the object for seeing triangles
+
+o: switch objects
+
+m: swap between smooth lighting and non-smooth lighting on the sphere
+
+f: shows failed geometry shader project
+, and .: change LOD on failure
+
+esc: exit program
+
+
+----CODE REUSE:
+Code began as ex18, also got some starter shader code from learnopengl.com
+
+----OTHER NOTES:
+I made an LOD simulator using tesselation as well as a failed attempt at a similar outcome using a geometry shader.
+
+The geometry shader didn't work because I hit a cap on how many vertices I can make in the geometry shader... now I know.
+
+The further away the object is, the less detail it is given, using orthogonal can allow you to watch this effect in action without it becoming very small.
+PUSH W/S
+
+I am very proud of my creation of the Torus shape, it was a bit more complex than the sphere and I'm confident I understand VAO's and tesselation shaders now.
+

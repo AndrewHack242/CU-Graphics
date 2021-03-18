@@ -21,9 +21,9 @@ void main()
    //  Diffuse only lighting
    vec3 N = normalize(gFacetNormal);
    vec3 L = normalize(LightDir);
-   vec3 color = AmbientMaterial + max(dot(N,L),0.0) * DiffuseMaterial;
+   vec3 color = vec3(0,0,1.0) * AmbientMaterial + max(dot(N,L),0.0) * DiffuseMaterial;
 
-   //  Draw mesh in red, heavy for patches, light for triangles
+//  Draw mesh in red, heavy for patches, light for triangles
    if(lines == 1)
    {
       float d1 = min(min(gTriDistance.x, gTriDistance.y), gTriDistance.z);

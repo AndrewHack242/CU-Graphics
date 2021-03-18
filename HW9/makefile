@@ -1,5 +1,5 @@
 # Example 18
-EXE=ex18
+EXE=hw9
 
 # Main target
 all: $(EXE)
@@ -24,7 +24,7 @@ CLEAN=rm -f $(EXE) *.o *.a
 endif
 
 # Dependencies
-ex18.o: ex18.c CSCIx239.h
+hw9.o: hw9.c CSCIx239.h
 fatal.o: fatal.c CSCIx239.h
 errcheck.o: errcheck.c CSCIx239.h
 print.o: print.c CSCIx239.h
@@ -57,7 +57,7 @@ CSCIx239.a:fatal.o errcheck.o print.o axes.o loadtexbmp.o loadobj.o projection.o
 	g++ -c $(CFLG)  $<
 
 #  Link
-ex18:ex18.o  CSCIx239.a
+hw9:hw9.o  CSCIx239.a
 	gcc -O3 -o $@ $^  $(LIBS)
 
 #  Clean
