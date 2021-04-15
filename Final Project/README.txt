@@ -1,38 +1,18 @@
-Andrew Hack, HW2
+Andrew Hack, final checkup
 
-Time spent: 3 hours
+You don't need to run it, there isn't much to see.
 
 compiling: make
-running: ./hw2
+running: ./final
 
-----KEYBINDS
+I AM RUNNING BEHIND - plain and Simple
 
-arrows: rotate around scene
+What is done: all of the "functionality"
 
-p: swap between perspective and orthogonal
+What needs to be done: 
+create objects
+	-create the shaders for effects on these objects (infrastructure for using them is already setup)
+	-create/find textures to apply
+actually build the scene files out using the objects
 
-m/shift+m: toggle shaders
-
-z/shift+z: zoom
-
-o/shift+o: change objects
-
-page up & page down: change dimensions of space
-
-esc: exit program
-
-
-----CODE REUSE:
-Code is very similar to your ex3, started as a copy. Added my own companion cubes as 
-an additional object choice, and made the required shaders.
-
-
-----OTHER NOTES:
-I created 3 procedrual textures using shaders.
-
-1) a texture with slowly moving hexagons. These Hexagons are rendered through a tequnique 
-	similar to your bricks tequnique, and yet quite a bit more detail is required to make 
-	the hexagon shapes.
-2) a smaller version of the hexagon texture that plays better with the zoom feature.
-3) The first procedrual texture that I made while making sure I understood what I was doing.
-	Simple stripe effect that moves on the y-axis.
+It is a lot of work and I am aware that there is not much feedback you can give me right now.
