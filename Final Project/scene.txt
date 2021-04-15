@@ -1,0 +1,3 @@
+#class pos rot scale texture alpha? normal
+
+Surface 0,0,0 0,0,0 1,1,1 concrete_modular_ceiling1.bmp true
