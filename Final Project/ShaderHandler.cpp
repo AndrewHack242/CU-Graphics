@@ -10,12 +10,12 @@ namespace ShaderHandler
 
     unsigned int LoadShader(std::string name, std::string vert, std::string frag)
     {
-        if (shaders.find(name) != shaders.end()) //if texture already exists in map
+        if (shaders.find(name) != shaders.end()) //if shader already exists in map
         {
             return shaders.at(name);
         }
         //  Create program
-        int prog = glCreateProgram();
+        unsigned int prog = glCreateProgram();
         //  Create and compile vertex shader
         CreateShader(prog, GL_VERTEX_SHADER, vert.c_str());
         //  Create and compile fragment shader
@@ -27,17 +27,18 @@ namespace ShaderHandler
         //add to the map
         shaders.emplace(name, prog);
         //  Return name
+        ErrCheck("LoadShader");
         return prog;
     }
 
     unsigned int LoadGeomShader(std::string name, std::string vert, std::string geom, std::string frag)
     {
-        if (shaders.find(name) != shaders.end()) //if texture already exists in map
+        if (shaders.find(name) != shaders.end()) //if shader already exists in map
         {
             return shaders.at(name);
         }
         //  Create program
-        int prog = glCreateProgram();
+        unsigned int prog = glCreateProgram();
         //  Create and compile vertex shader
         CreateShader(prog, GL_VERTEX_SHADER, vert.c_str());
 #ifdef GL_GEOMETRY_SHADER
@@ -56,6 +57,40 @@ namespace ShaderHandler
         //add to the map
         shaders.emplace(name, prog);
         //  Return name
+        ErrCheck("LoadGeomShader");
+        return prog;
+    }
+
+    unsigned int LoadTesShader(std::string name, std::string vert, std::string tesc, std::string tese, std::string geom, std::string frag)
+    {
+        ErrCheck("LoadTesShader:-2");
+        if (shaders.find(name) != shaders.end()) //if shader already exists in map
+        {
+            return shaders.at(name);
+        }
+        ErrCheck("LoadTesShader:-1");
+        //  Create program
+        unsigned int prog = glCreateProgram();
+        ErrCheck("LoadTesShader:0");
+        CreateShader(prog, GL_VERTEX_SHADER, vert.c_str());
+        ErrCheck("LoadTesShader:1");
+        CreateShader(prog, GL_TESS_CONTROL_SHADER, tesc.c_str());
+        ErrCheck("LoadTesShader:2");
+        CreateShader(prog, GL_TESS_EVALUATION_SHADER, tese.c_str());
+        ErrCheck("LoadTesShader:3");
+        CreateShader(prog, GL_GEOMETRY_SHADER, geom.c_str());
+        ErrCheck("LoadTesShader:4");
+        CreateShader(prog, GL_FRAGMENT_SHADER, frag.c_str());
+        ErrCheck("LoadTesShader:5");
+
+        //  Link program
+        glLinkProgram(prog);
+        //  Check for errors
+        PrintProgramLog(prog);
+        //add to the map
+        shaders.emplace(name, prog);
+        //  Return name
+        ErrCheck("LoadTesShader");
         return prog;
     }
 

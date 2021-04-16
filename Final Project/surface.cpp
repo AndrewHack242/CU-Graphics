@@ -1,40 +1,78 @@
 #include "surface.h"
 
-//
-//  face Data
-//  TODO: move to VBOHandler
-unsigned int face_vbo = 0;
-const int face_size = 6;
-const float face_data[] = // Vertex data
+
+unsigned int vao;
+int N;
+static void CreateFace()
 {
-//  X  Y  Z  W   Nx Ny Nz    R G B A   s t
-   //  Face
-   +1,+1, 0,+1,   0, 0,+1,   1,1,1,1,  1,1,
-   -1,+1, 0,+1,   0, 0,+1,   1,1,1,1,  0,1,
-   +1,-1, 0,+1,   0, 0,+1,   1,1,1,1,  1,0,
-   -1,+1, 0,+1,   0, 0,+1,   1,1,1,1,  0,1,
-   +1,-1, 0,+1,   0, 0,+1,   1,1,1,1,  1,0,
-   -1,-1, 0,+1,   0, 0,+1,   1,1,1,1,  0,0,
-   };
+   unsigned int verts, faces;
+           const int Faces[] =
+       {
+           0,1,2, 1,2,3 
+           };
+   const float Verts[] =
+       {
+          //  X  Y  Z  W   Nx Ny Nz    R G B A   s t
+            //  Face
+            +1,+1, 0,+1,   0, 0,+1,   1,1,1,1,  1,1, //0
+            -1,+1, 0,+1,   0, 0,+1,   1,1,1,1,  0,1, //1
+            +1,-1, 0,+1,   0, 0,+1,   1,1,1,1,  1,0, //2
+            -1,-1, 0,+1,   0, 0,+1,   1,1,1,1,  0,0, //3
+           };
+   N = sizeof(Faces) / sizeof(int);
+
+    ErrCheck("VBOInit:1");
+   //  Position attribute
+   /* unsigned int shader =  */ShaderHandler::useShader("gl4");
+    ErrCheck("VBOInit:1.5");
+   //int loc = glGetAttribLocation(shader, "Vertex");
+
+    ErrCheck("VBOInit:2");
+   // Create the VAO:
+   glGenVertexArrays(1, &vao);
+   glBindVertexArray(vao);
+
+   // Create the VBO for facet indices
+   glGenBuffers(1, &faces);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faces);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Faces), Faces, GL_STATIC_DRAW);
+
+    ErrCheck("VBOInit:3");
+   // Create the VBO for coordinates
+   glGenBuffers(1, &verts);
+   glBindBuffer(GL_ARRAY_BUFFER, verts);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(Verts), Verts, GL_STATIC_DRAW);
+   
+    ErrCheck("VBOInit:4");
+   // Enable Position as vertex array
+   //glEnableVertexAttribArray(loc);
+   //glVertexAttribPointer(loc, 4, GL_FLOAT, GL_FALSE, 52, 0);
+
+    glEnableVertexAttribArray(0); // Vertex
+    glEnableVertexAttribArray(1); // Normal
+    glEnableVertexAttribArray(2); // Color
+    glEnableVertexAttribArray(3); // Textures
+    
+    glVertexAttribPointer(0, 4, GL_FLOAT, 0, 52, (void *)0);  // Vertex
+    glVertexAttribPointer(1, 3, GL_FLOAT, 0, 52, (void *)16); // Normal
+    glVertexAttribPointer(2, 4, GL_FLOAT, 0, 52, (void *)28); // Color
+    glVertexAttribPointer(3, 2, GL_FLOAT, 0, 52, (void *)44); // Textures
+
+    ErrCheck("VBOInit:5");
+   ShaderHandler::disableShaders();
+}
 
 
 void Surface::VBOInit()
 {
-    //  Get buffer name
-    glGenBuffers(1, &face_vbo);
-    //  Bind VBO
-    glBindBuffer(GL_ARRAY_BUFFER, face_vbo);
-    //  Copy icosahedron to VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(face_data), face_data, GL_STATIC_DRAW);
-    //  Release VBO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    CreateFace();
 }
 
 Surface::Surface(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha) : Object(pos, scale, rot)
 {
     textures.push_back(TextureHandler::LoadTexture(tex,hasAlpha)); //load the texture for this surface
-    VBOInit();
     ShaderHandler::LoadShader("gl4","Shaders/gl4.vert","Shaders/gl4.frag");
+    VBOInit();
 }
 
 void Surface::drawObject()
@@ -42,26 +80,33 @@ void Surface::drawObject()
     ShaderHandler::useShader("gl4");
     glEnable(GL_TEXTURE_2D);
 
-    glBindBuffer(GL_ARRAY_BUFFER, face_vbo);
+    //glBindBuffer(GL_ARRAY_BUFFER, face_vbo);
 
     glBindTexture(GL_TEXTURE_2D,textures[0]);
     
-    //  Set vertex attribute pointers
+    /* //  Set vertex attribute pointers
     glVertexAttribPointer(0, 4, GL_FLOAT, 0, 52, (void *)0);  // Vertex
     glVertexAttribPointer(1, 3, GL_FLOAT, 0, 52, (void *)16); // Normal
     glVertexAttribPointer(2, 4, GL_FLOAT, 0, 52, (void *)28); // Color
     glVertexAttribPointer(3, 2, GL_FLOAT, 0, 52, (void *)44); // Textures
-
-    //  Enable vertex arrays
+//
+    ////  Enable vertex arrays
     glEnableVertexAttribArray(0); // Vertex
     glEnableVertexAttribArray(1); // Normal
     glEnableVertexAttribArray(2); // Color
     glEnableVertexAttribArray(3); // Textures
 
     // Draw the face
-    glDrawArrays(GL_TRIANGLES, 0, face_size);
+    glDrawArrays(GL_TRIANGLES, 0, face_size); 
+    
+    
+    glBindBuffer(GL_ARRAY_BUFFER, face_vbo);*/
+    
 
-    glBindBuffer(GL_ARRAY_BUFFER, face_vbo);
+    //  Bind VAO and render
+   glBindVertexArray(vao);
+   glDrawElements(GL_TRIANGLES, N, GL_UNSIGNED_INT, 0);
+
     glBindTexture(GL_TEXTURE_2D, 0);
 
     glDisable(GL_TEXTURE_2D);

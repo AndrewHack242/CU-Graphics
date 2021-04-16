@@ -11,6 +11,7 @@
 //#include "Camera.h"
 
 #include "surface.h"
+#include "Ring.h"
 
 class Scene
 {

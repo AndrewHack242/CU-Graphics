@@ -278,8 +278,8 @@ void InitCompanion()
     InitSidePanels();
     InitCornerPanels();
     InitWoodPanels();
-    texwood = LoadTexBMP32("textures/woodpanel_002.bmp", true);
-    texedge = LoadTexBMP32("textures/underground_wall_metal004d.bmp", true);
+    texwood = LoadTexBMP32("Textures/woodpanel_002.bmp", true);
+    texedge = LoadTexBMP32("Textures/underground_wall_metal004d.bmp", true);
 }
 
 Companion::Companion()

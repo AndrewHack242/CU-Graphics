@@ -127,6 +127,10 @@ void Scene::LoadObject(std::string objLine)
     {
         objects.push_back(new Surface(position, scale, rotation, texturePath, hasAlpha));
     }
+    else if (objName == "Ring")
+    {
+        objects.push_back(new Ring(position, scale, rotation));
+    }
     //TODO: add in objects to spawn later
     //spawn objects
     /*

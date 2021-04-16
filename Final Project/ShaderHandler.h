@@ -15,6 +15,7 @@ namespace ShaderHandler
 {
     unsigned int LoadShader(std::string name, std::string vert, std::string frag);
     unsigned int LoadGeomShader(std::string name, std::string vert, std::string geom, std::string frag);
+    unsigned int LoadTesShader(std::string name, std::string vert, std::string tesc, std::string tese, std::string geom, std::string frag);
 
     void updateProjMatrix(glm::mat4 proj);
     void updateViewMatrix(glm::mat4 view);

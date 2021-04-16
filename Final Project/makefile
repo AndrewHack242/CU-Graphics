@@ -31,6 +31,7 @@ Object.o: Object.cpp Object.h
 TextureHandler.o: TextureHandler.cpp TextureHandler.h
 ShaderHandler.o: ShaderHandler.cpp ShaderHandler.h
 surface.o: surface.cpp surface.h
+Ring.o: Ring.cpp Ring.h
 
 
 
@@ -66,7 +67,7 @@ CSCIx239.a:fatal.o errcheck.o print.o axes.o loadtexbmp.o loadobj.o projection.o
 	g++ -c $(CFLG)  $<
 
 #  Link
-final:final.o scene.o Object.o TextureHandler.o ShaderHandler.o companion.o surface.o CSCIx239.a
+final:final.o scene.o Object.o TextureHandler.o ShaderHandler.o companion.o surface.o Ring.o CSCIx239.a
 	g++ -O3 -o $@ $^  $(LIBS)
 
 #  Clean
