@@ -1,21 +1,21 @@
-#include "surface.h"
+#include "Floor.h"
 
 
-void Surface::VAOInit()
+void Floor::VAOInit()
 {
     unsigned int verts, faces;
            const int Faces[] =
        {
-           0,1,2, 1,3,2 
+           0,2,1, 1,2,3 
            };
    const float Verts[] =
        {
           //  X  Y  Z  W   Nx Ny Nz    R G B A   s t
             //  Face
-            +1,+1, 0,+1,   0, 0,+1,   1,1,1,1,  1,1, //0
-            -1,+1, 0,+1,   0, 0,+1,   1,1,1,1,  0,1, //1
-            +1,-1, 0,+1,   0, 0,+1,   1,1,1,1,  1,0, //2
-            -1,-1, 0,+1,   0, 0,+1,   1,1,1,1,  0,0, //3
+            +1, 0,+1,+1,   0, 0,+1,   1,1,1,1,  1,1, //0
+            -1, 0,+1,+1,   0, 0,+1,   1,1,1,1,  0,1, //1
+            +1, 0,-1,+1,   0, 0,+1,   1,1,1,1,  1,0, //2
+            -1, 0,-1,+1,   0, 0,+1,   1,1,1,1,  0,0, //3
            };
    N = sizeof(Faces) / sizeof(int);
 
@@ -51,14 +51,14 @@ void Surface::VAOInit()
    ShaderHandler::disableShaders();
 }
 
-Surface::Surface(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha) : Object(pos, scale, rot)
+Floor::Floor(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha) : Object(pos, scale, rot)
 {
-    textures.push_back(TextureHandler::LoadTexture(tex,hasAlpha)); //load the texture for this surface
+    textures.push_back(TextureHandler::LoadTexture(tex,hasAlpha)); //load the texture for this Floor
     ShaderHandler::LoadShader("gl4","Shaders/gl4.vert","Shaders/gl4.frag");
     VAOInit();
 }
 
-void Surface::drawObject()
+void Floor::drawObject()
 {
     ShaderHandler::useShader("gl4");
     glEnable(GL_TEXTURE_2D);

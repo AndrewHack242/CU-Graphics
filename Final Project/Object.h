@@ -22,7 +22,7 @@ public:
 
 protected:
     virtual void drawObject();
-    virtual void VBOInit();
+    virtual void VAOInit();
 
     std::vector<unsigned int> textures;
     glm::vec3 pos, s, rot;

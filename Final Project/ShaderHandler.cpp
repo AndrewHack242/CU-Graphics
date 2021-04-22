@@ -1,5 +1,5 @@
 #include "ShaderHandler.h"
-
+//TODO: add time as uniform
 namespace ShaderHandler
 {
     namespace
@@ -100,7 +100,7 @@ namespace ShaderHandler
         {
             return shaders.at(name);
         }
-        std::cout << "shader not found" << std::endl;
+        std::cout << "shader not found - get: " << name << std::endl;
         return 0;
     }
 
@@ -112,7 +112,7 @@ namespace ShaderHandler
             active = shaders.at(name);
             return shaders.at(name);
         }
-        std::cout << "shader not found" << std::endl;
+        std::cout << "shader not found - use: " << name << std::endl;
         return (0);
     }
 
@@ -188,6 +188,19 @@ namespace ShaderHandler
             glUseProgram(val);
             int id = glGetUniformLocation(val, "fov");
             glUniform1f(id, fov);
+        }
+        glUseProgram(active);
+    }
+
+    
+    void updateTime(float time)
+    {
+        for (auto const &x : shaders)
+        {
+            unsigned int val = x.second;
+            glUseProgram(val);
+            int id = glGetUniformLocation(val, "time");
+            glUniform1f(id, time);
         }
         glUseProgram(active);
     }

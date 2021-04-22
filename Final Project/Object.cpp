@@ -27,7 +27,7 @@ void Object::drawObject()
     std::cout << "an object does not have a drawObject() function." << std::endl;
 }
 
-void Object::VBOInit()
+void Object::VAOInit()
 {
     std::cout << "an object does not have a VBOInit() function." << std::endl;
 }

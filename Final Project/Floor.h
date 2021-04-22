@@ -2,10 +2,10 @@
 
 #include "Object.h"
 
-class Surface : public Object
+class Floor : public Object
 {
 public:
-    Surface(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha);
+    Floor(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha);
 
 protected:
     virtual void drawObject();

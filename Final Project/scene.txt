@@ -1,8 +1,18 @@
 #class pos rot scale texture alpha? normal
 
-Ring 0,0,0 0,0,0 1,1,1
-
 Surface 0,0,3 0,0,0 1,1,1 concrete_modular_ceiling1.bmp true
+#Ring 0,0,0 0,0,0 1,1,1
+
+Surface 0,0,-3 0,0,0 1,1,1 concrete_modular_ceiling1.bmp true
 #Ring 0,0,4 0,0,0 1,1,1
 
 #Ring 2,0,0 0,90,0 1,1,1
+
+Pillar 0,3,0 0,0,0 3,
+
+
+Floor 0,0,-3 0,0,0 1,1,1 stone.bmp true
+
+Lava 3,-2,0 0,0,0 1,1,1
+
+#Lava 2,-2,0 0,0,0 1,1,1

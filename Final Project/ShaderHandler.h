@@ -22,6 +22,7 @@ namespace ShaderHandler
     void updateModelMatrix(glm::mat4 model);
     void updateLightInfo(glm::vec4 global, glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular, glm::vec4 position, glm::vec4 lightcolor);
     void updateFOV(float fov);
+    void updateTime(float time);
 
     unsigned int getShader(std::string name);
     unsigned int useShader(std::string name);

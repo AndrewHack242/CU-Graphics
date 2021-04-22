@@ -127,9 +127,21 @@ void Scene::LoadObject(std::string objLine)
     {
         objects.push_back(new Surface(position, scale, rotation, texturePath, hasAlpha));
     }
+    else if (objName == "Floor")
+    {
+        objects.push_back(new Floor(position, scale, rotation, texturePath, hasAlpha));
+    }
     else if (objName == "Ring")
     {
         objects.push_back(new Ring(position, scale, rotation));
+    }
+    else if (objName == "Pillar")
+    {
+        objects.push_back(new Pillar(position, scale, rotation));
+    }
+    else if (objName == "Lava")
+    {
+        objects.push_back(new Lava(position, scale, rotation));
     }
     //TODO: add in objects to spawn later
     //spawn objects

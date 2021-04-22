@@ -10,7 +10,6 @@
  *  0          Reset view angle
  *  ESC        Exit
  */
-#include "companion.h"
 #include "CSCIx239.h"
 #include "scene.h"
 #include "ShaderHandler.h"
@@ -39,6 +38,9 @@ void display(GLFWwindow *window)
    //  Enable Z-buffering in OpenGL
    glEnable(GL_DEPTH_TEST);
 
+   //TODO: re-enable when done
+   glEnable(GL_CULL_FACE);
+
    //TODO: move lighting to its own handler FIX THE LIGHT SO THAT IT ISN'T DRAWN INCORRECTLY
 
    //  Lighting parameters
@@ -47,10 +49,14 @@ void display(GLFWwindow *window)
    glm::vec4 diffuse = {0.8, 0.8, 0.8, 1.0};
    glm::vec4 specular = {1.0, 1.0, 1.0, 1.0};
    glm::vec4 lightposition = {(float)(3 * Cos(zh)), YL, (float)(3 * Sin(zh)), 1.0};
-   glm::vec4 lightcolor = {1.0, 0.0, 0.5, 1.0};
+   glm::vec4 lightcolor = {1.0, 1.0, 1.0, 1.0};
 
    //  Set light property uniforms
    ShaderHandler::updateLightInfo(global, ambient, diffuse, specular, lightposition, lightcolor);
+
+   //set the time in the shaders
+   float t = glfwGetTime();
+   ShaderHandler::updateTime(t);
 
    //  Draw light position as white ball using fixed pipeline
    glColor3f(1, 1, 1);
@@ -77,19 +83,7 @@ void display(GLFWwindow *window)
    ShaderHandler::updateProjMatrix(proj);
    ShaderHandler::updateViewMatrix(view);
 
-   //  Set Projection, View, Modelview and Normal Matrix now moved toShaderHandler
-
    scene.drawScene();
-   //Companion c(0, 0, 0, 1, 0, 270, 0);
-   //Companion c2(3, -.25, 2.5, 0.75, 0, 26, 0);
-   //Companion c3(0, 1.455, 0, 0.4, 0, 45, 180);
-   //Companion c4(1.85, 0, 0, 0.6, 0, 0, 60);
-   //Companion c5(3, 1, 2.5, 0.5, 0, 94, 0);
-   //c.display(shader[mode], proj, view, modelview, normal);
-   //c2.display(shader[mode], proj, view, modelview, normal);
-   //c3.display(shader[mode], proj, view, modelview, normal);
-   //c4.display(shader[mode], proj, view, modelview, normal);
-   //c5.display(shader[mode], proj, view, modelview, normal);
 
    //  Fixed pipeline
 
@@ -199,7 +193,7 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
    if (ph < -85)
       ph = -85;
    //  Update projection
-   Projection (fov, asp, dim);
+   Projection(fov, asp, dim);
 }
 
 //
@@ -224,9 +218,6 @@ int main(int argc, char *argv[])
 {
    //  Initialize GLFW
    GLFWwindow *window = InitWindow("HW4: Andrew Hack", 1, 900, 900, &reshape, &key);
- 
-   //  Load cube into VBO
-   InitCompanion();
 
    pos = glm::vec3(0, 0, 3);
    th = -90;

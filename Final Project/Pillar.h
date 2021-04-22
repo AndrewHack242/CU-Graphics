@@ -2,10 +2,10 @@
 
 #include "Object.h"
 
-class Surface : public Object
+class Pillar : public Object
 {
 public:
-    Surface(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha);
+    Pillar(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot);
 
 protected:
     virtual void drawObject();

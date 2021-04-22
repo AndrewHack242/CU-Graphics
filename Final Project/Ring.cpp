@@ -68,13 +68,10 @@ static void CreateRing()
            };
    RingN = sizeof(Faces) / sizeof(int);
 
-    ErrCheck("VBOInit:1");
    //  Position attribute
    unsigned int shader = ShaderHandler::useShader("ring");
-    ErrCheck("VBOInit:1.5");
    int loc = glGetAttribLocation(shader, "Position");
 
-    ErrCheck("VBOInit:2");
    // Create the VAO:
    glGenVertexArrays(1, &ringvao);
    glBindVertexArray(ringvao);
@@ -84,32 +81,29 @@ static void CreateRing()
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, faces);
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Faces), Faces, GL_STATIC_DRAW);
 
-    ErrCheck("VBOInit:3");
    // Create the VBO for coordinates
    glGenBuffers(1, &verts);
    glBindBuffer(GL_ARRAY_BUFFER, verts);
    glBufferData(GL_ARRAY_BUFFER, sizeof(Verts), Verts, GL_STATIC_DRAW);
    
-    ErrCheck("VBOInit:4");
    // Enable Position as vertex array
    glEnableVertexAttribArray(loc);
    glVertexAttribPointer(loc, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
 
-    ErrCheck("VBOInit:5");
    ShaderHandler::disableShaders();
 }
 
 
-void Ring::VBOInit()
+void Ring::VAOInit()
 {
     CreateRing();
-    ErrCheck("VBOInit");
+    ErrCheck("VAOInit");
 }
 
 Ring::Ring(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot) : Object(pos, scale, rot)
 {
     ShaderHandler::LoadTesShader("ring","Shaders/geodesic.vert", "Shaders/geodesic.tesc", "Shaders/ring.tese", "Shaders/geodesic.geom", "Shaders/geodesic.frag");
-    VBOInit();
+    VAOInit();
 }
 
 void Ring::drawObject()

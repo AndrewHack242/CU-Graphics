@@ -2,12 +2,15 @@
 
 #include "Object.h"
 
-class Ring : public Object
+class Lava : public Object
 {
 public:
-    Ring(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot);
+    Lava(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot);
 
 protected:
     virtual void drawObject();
     virtual void VAOInit();
+
+    unsigned int vao;
+    int N;
 };
