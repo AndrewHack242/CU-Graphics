@@ -8,11 +8,15 @@ Surface 0,0,-3 0,0,0 1,1,1 concrete_modular_ceiling1.bmp true
 
 #Ring 2,0,0 0,90,0 1,1,1
 
-Pillar 0,3,0 0,0,0 3,
+Pillar 0,1,0 0,0,0 1,2,1
 
 
-Floor 0,0,-3 0,0,0 1,1,1 stone.bmp true
+Floor 0,-1,0 0,0,0 1,1,1 stone.bmp true
 
 Lava 3,-2,0 0,0,0 1,1,1
 
 #Lava 2,-2,0 0,0,0 1,1,1
+
+Shimmer 3,0,0, 0,0,0, 1,1,1
+
+Surface 4.2,-2,0 0,90,0 1,1,1 concrete_modular_ceiling1.bmp true

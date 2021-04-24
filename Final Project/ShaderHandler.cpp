@@ -4,6 +4,8 @@ namespace ShaderHandler
 {
     namespace
     {
+        unsigned int screenTex = 0;
+        int W = 0, H = 0;
         unsigned int active = 0;
         std::map<std::string, unsigned int> shaders; //holds all loaded textures so that they only need to be loaded once
     }
@@ -192,7 +194,6 @@ namespace ShaderHandler
         glUseProgram(active);
     }
 
-    
     void updateTime(float time)
     {
         for (auto const &x : shaders)
@@ -203,6 +204,58 @@ namespace ShaderHandler
             glUniform1f(id, time);
         }
         glUseProgram(active);
+    }
+
+    void updatePixMan(int width, int height, float dX, float dY)
+    {
+        W = width;
+        H = height;
+        for (auto const &x : shaders)
+        {
+            unsigned int val = x.second;
+            glUseProgram(val);
+            int id = glGetUniformLocation(val, "dX");
+            glUniform1f(id, dX);
+            id = glGetUniformLocation(val, "dY");
+            glUniform1f(id, dY);
+            
+            glm::vec2 res = glm::vec2(width,height);
+            id = glGetUniformLocation(val, "resolution");
+            glUniform2fv(id, 1, &res[0]);
+        }
+        glUseProgram(active);
+    }
+
+    void updateScreenTex()
+    {
+        if (screenTex == 0)
+        {
+            std::cout << "gen'n that texture" << std::endl;
+            glGenTextures(1, &screenTex);
+            //  Image texture
+            glBindTexture(GL_TEXTURE_2D, screenTex);
+            //  Nearest returns exact cell values
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            //  do not allow texture wrapping so that you dont see the other side of the screen
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        }
+        glBindTexture(GL_TEXTURE_2D, screenTex);
+        glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 0, 0, W, H, 0);
+        for (auto const &x : shaders)
+        {
+            unsigned int val = x.second;
+            glUseProgram(val);
+            int id = glGetUniformLocation(val, "screenTex");
+            glUniform1i(id, 0);
+        }
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    unsigned int getScreenTex()
+    {
+        return screenTex;
     }
 
 } //end ShaderHandler namespace

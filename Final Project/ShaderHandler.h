@@ -24,6 +24,10 @@ namespace ShaderHandler
     void updateFOV(float fov);
     void updateTime(float time);
 
+    void updatePixMan(int W,int H,float dX,float dY);
+    void updateScreenTex();
+    unsigned int getScreenTex();
+
     unsigned int getShader(std::string name);
     unsigned int useShader(std::string name);
     void disableShaders();

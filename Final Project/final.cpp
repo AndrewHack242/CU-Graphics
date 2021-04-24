@@ -25,6 +25,8 @@ float YL = 1.5; //  Light elevation
 float asp = 1;  //  Aspect ratio
 float dim = 4;  //  Size of world
 const char *text[] = {"OpenGL 2", "OpenGL 4"};
+float dX = 0, dY = 0;
+int W = 0, H = 0;
 
 Scene scene;
 
@@ -65,6 +67,7 @@ void display(GLFWwindow *window)
 
    //  Create Projection matrix //TODO: create window class for this ish
    ShaderHandler::updateFOV(fov);
+   ShaderHandler::updatePixMan(W,H,dX,dY);
    glm::mat4 proj(1.0f);
    proj = glm::perspective(glm::radians((float)fov), asp, dim / 16, 16 * dim); //mat4perspective(proj , fov,asp,dim/16,16*dim);
 
@@ -209,6 +212,10 @@ void reshape(GLFWwindow *window, int width, int height)
    glViewport(0, 0, width, height);
    //  Set projection
    Projection(fov, asp, dim);
+   W = width;
+   H = height;
+   dX = 1.0/W;
+   dY = 1.0/H;
 }
 
 //
@@ -217,7 +224,7 @@ void reshape(GLFWwindow *window, int width, int height)
 int main(int argc, char *argv[])
 {
    //  Initialize GLFW
-   GLFWwindow *window = InitWindow("HW4: Andrew Hack", 1, 900, 900, &reshape, &key);
+   GLFWwindow *window = InitWindow("Final Project: Andrew Hack", 1, 900, 900, &reshape, &key);
 
    pos = glm::vec3(0, 0, 3);
    th = -90;

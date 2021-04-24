@@ -15,6 +15,7 @@
 #include "Pillar.h"
 #include "Lava.h"
 #include "Floor.h"
+#include "Shimmer.h"
 
 class Scene
 {
@@ -37,4 +38,5 @@ protected:
     //Camera camera;
     std::string filename;
     std::vector<Object *> objects;
+    std::vector<Object *> effects;
 };

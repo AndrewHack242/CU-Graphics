@@ -18,6 +18,11 @@ void Scene::drawScene()
     {
         object->draw();
     }
+    ShaderHandler::updateScreenTex(); //may need to change this depending on how effects need to interact
+    for (Object *effect : effects)
+    {
+        effect->draw();
+    }
 }
 
 //takes: 0,0,0
@@ -143,42 +148,10 @@ void Scene::LoadObject(std::string objLine)
     {
         objects.push_back(new Lava(position, scale, rotation));
     }
-    //TODO: add in objects to spawn later
-    //spawn objects
-    /*
-    if (objName == "SimpleObject")
+    else if (objName == "Shimmer")
     {
-        objects.push_back(new SimpleObject(pos, scale, rot));
+        effects.push_back(new Shimmer(position, scale, rotation));
     }
-    else if (objName == "ComplexObject")
-    {
-        objects.push_back(new ComplexObject(pos, scale, rot));
-    }
-    else if (objName == "Companion")
-    {
-        objects.push_back(new Companion(pos, scale, rot));
-    }
-    else if (objName == "Dropper")
-    {
-        objects.push_back(new Dropper(pos, scale, rot));
-    }
-    else if (objName == "Observe")
-    {
-        objects.push_back(new Observe(pos, scale, rot));
-    }
-    else if (objName == "Floor")
-    {
-        objects.push_back(new Floor(pos, scale, rot, {texturePath}, {hasAlpha}, normalMapPath));
-    }
-    else if (objName == "Wall")
-    {
-        objects.push_back(new Wall(pos, scale, rot, {texturePath}, {hasAlpha}, normalMapPath));
-    }
-    else
-    {
-        std::cout << "ERROR:[" << objName << "] does not exist" << std::endl;
-    }
-    */
 }
 
 void Scene::loadWorldFile(std::string worldfile)

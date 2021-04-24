@@ -35,6 +35,6 @@ void main()
     float len = (w/2)*pow(p.y,2) + (w/2);
     vec3 tmp = normalize(vec3(p.x,0.0f,p.z));
     tePosition = vec3(len* tmp.x,p.y,len * tmp.z);
-    teNormal = normalize(vec3(tmp.x,-p.y/2,tmp.z));
+    teNormal = normalize(vec3(tmp.x,-p.y*w,tmp.z));
     gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(tePosition, 1);
 }
