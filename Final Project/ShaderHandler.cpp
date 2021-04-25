@@ -19,9 +19,11 @@ namespace ShaderHandler
         //  Create program
         unsigned int prog = glCreateProgram();
         //  Create and compile vertex shader
-        CreateShader(prog, GL_VERTEX_SHADER, vert.c_str());
+        if (vert != "")
+            CreateShader(prog, GL_VERTEX_SHADER, vert.c_str());
         //  Create and compile fragment shader
-        CreateShader(prog, GL_FRAGMENT_SHADER, frag.c_str());
+        if (frag != "")
+            CreateShader(prog, GL_FRAGMENT_SHADER, frag.c_str());
         //  Link program
         glLinkProgram(prog);
         //  Check for errors
@@ -65,25 +67,17 @@ namespace ShaderHandler
 
     unsigned int LoadTesShader(std::string name, std::string vert, std::string tesc, std::string tese, std::string geom, std::string frag)
     {
-        ErrCheck("LoadTesShader:-2");
         if (shaders.find(name) != shaders.end()) //if shader already exists in map
         {
             return shaders.at(name);
         }
-        ErrCheck("LoadTesShader:-1");
         //  Create program
         unsigned int prog = glCreateProgram();
-        ErrCheck("LoadTesShader:0");
         CreateShader(prog, GL_VERTEX_SHADER, vert.c_str());
-        ErrCheck("LoadTesShader:1");
         CreateShader(prog, GL_TESS_CONTROL_SHADER, tesc.c_str());
-        ErrCheck("LoadTesShader:2");
         CreateShader(prog, GL_TESS_EVALUATION_SHADER, tese.c_str());
-        ErrCheck("LoadTesShader:3");
         CreateShader(prog, GL_GEOMETRY_SHADER, geom.c_str());
-        ErrCheck("LoadTesShader:4");
         CreateShader(prog, GL_FRAGMENT_SHADER, frag.c_str());
-        ErrCheck("LoadTesShader:5");
 
         //  Link program
         glLinkProgram(prog);
@@ -93,6 +87,39 @@ namespace ShaderHandler
         shaders.emplace(name, prog);
         //  Return name
         ErrCheck("LoadTesShader");
+        return prog;
+    }
+
+    unsigned int LoadAttrShader(std::string name, std::string vert, std::string frag, std::string attr[])
+    {
+        if (shaders.find(name) != shaders.end()) //if shader already exists in map
+        {
+            return shaders.at(name);
+        }
+
+        int k;
+        //  Create program
+        int prog = glCreateProgram();
+        //  Create and compile vertex shader
+        if (vert != "")
+            CreateShader(prog, GL_VERTEX_SHADER, vert.c_str());
+        //  Create and compile fragment shader
+        if (frag != "")
+            CreateShader(prog, GL_FRAGMENT_SHADER, frag.c_str());
+
+        //  Set names
+        for (k = 0; attr[k].c_str(); k++)
+            if (attr[k][0])
+                glBindAttribLocation(prog, k, attr[k].c_str());
+
+        ErrCheck("CreateAttrShaderProg");
+        //  Link program
+        glLinkProgram(prog);
+        //  Check for errors
+        PrintProgramLog(prog);
+        //add to the map
+        shaders.emplace(name, prog);
+        //  Return name
         return prog;
     }
 
@@ -218,8 +245,8 @@ namespace ShaderHandler
             glUniform1f(id, dX);
             id = glGetUniformLocation(val, "dY");
             glUniform1f(id, dY);
-            
-            glm::vec2 res = glm::vec2(width,height);
+
+            glm::vec2 res = glm::vec2(width, height);
             id = glGetUniformLocation(val, "resolution");
             glUniform2fv(id, 1, &res[0]);
         }
@@ -230,7 +257,6 @@ namespace ShaderHandler
     {
         if (screenTex == 0)
         {
-            std::cout << "gen'n that texture" << std::endl;
             glGenTextures(1, &screenTex);
             //  Image texture
             glBindTexture(GL_TEXTURE_2D, screenTex);
@@ -256,6 +282,23 @@ namespace ShaderHandler
     unsigned int getScreenTex()
     {
         return screenTex;
+    }
+
+    void updateParticle(std::string name, glm::vec3 vel, glm::vec3 acc, float starttime)
+    {
+        unsigned int val = getShader(name);
+        glUseProgram(val);
+        ErrCheck("shadboi");
+        int id = glGetUniformLocation(val, "velocity");
+        glUniform3fv(id, 1, &vel[0]);
+        ErrCheck("shadboi2");
+        id = glGetUniformLocation(val, "acceleration");
+        glUniform3fv(id, 1, &acc[0]);
+        ErrCheck("shadboi3");
+        id = glGetUniformLocation(val, "starttime");
+        glUniform1f(id, starttime);
+        ErrCheck("shadboi4");
+        glUseProgram(active);
     }
 
 } //end ShaderHandler namespace

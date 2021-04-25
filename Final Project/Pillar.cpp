@@ -77,6 +77,7 @@ void Pillar::drawObject()
     //  Bind VAO and render
    glBindVertexArray(vao);
    glDrawElements(GL_PATCHES, N, GL_UNSIGNED_INT, 0);
+   glBindVertexArray(0);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 

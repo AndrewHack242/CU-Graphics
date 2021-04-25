@@ -68,6 +68,7 @@ void Floor::drawObject()
     //  Bind VAO and render
    glBindVertexArray(vao);
    glDrawElements(GL_TRIANGLES, N, GL_UNSIGNED_INT, 0);
+   glBindVertexArray(0);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 

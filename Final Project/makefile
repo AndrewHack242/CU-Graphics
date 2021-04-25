@@ -35,6 +35,7 @@ Pillar.o: Pillar.cpp Pillar.h
 Lava.o: Lava.cpp Lava.h
 Floor.o: Floor.cpp Floor.h
 Shimmer.o: Shimmer.cpp Shimmer.h
+LavaParticle.o: LavaParticle.cpp LavaParticle.h
 
 
 
@@ -70,7 +71,7 @@ CSCIx239.a:fatal.o errcheck.o print.o axes.o loadtexbmp.o loadobj.o projection.o
 	g++ -c $(CFLG)  $<
 
 #  Link
-final:final.o scene.o Object.o TextureHandler.o ShaderHandler.o surface.o Floor.o Ring.o Pillar.o Lava.o Shimmer.o CSCIx239.a
+final:final.o scene.o Object.o TextureHandler.o ShaderHandler.o surface.o Floor.o Ring.o Pillar.o Lava.o Shimmer.o LavaParticle.o CSCIx239.a
 	g++ -O3 -o $@ $^  $(LIBS)
 
 #  Clean

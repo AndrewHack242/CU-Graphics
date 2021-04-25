@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Object.h"
+#include "LavaParticle.h"
+
+#define PCount 5
 
 class Lava : public Object
 {
@@ -11,6 +14,11 @@ protected:
     virtual void drawObject();
     virtual void VAOInit();
 
+    void InitPart(void);
+    void DrawPart(void);
+
     unsigned int vao;
     int N;
+
+    LavaParticle p[PCount];
 };

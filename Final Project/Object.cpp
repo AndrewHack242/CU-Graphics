@@ -1,5 +1,9 @@
 #include "Object.h"
 
+Object::Object()
+{
+}
+
 Object::Object(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
 {
     pos = position;
@@ -20,6 +24,7 @@ void Object::draw()
 
     ShaderHandler::updateModelMatrix(model);
     drawObject();
+    glBindVertexArray(0);
 }
 
 void Object::drawObject()

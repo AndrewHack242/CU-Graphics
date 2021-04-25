@@ -19,12 +19,12 @@ void main(void)
    else
    {
       //  Particle color
-      gl_FrontColor = gl_Color;
+      gl_FrontColor = (1,1,1,1);
       //  Particle trajectory
       vert   += t*vec4(Vel,0);
       //  Gravity
       vert.y -= 4.9*t*t;
    }
    //  Transform particle location
-   gl_Position = gl_ModelViewProjectionMatrix*vert;
+   gl_Position = gl_ModelViewProjectionMatrix*vec4(0,0,0,1);
 }

@@ -157,6 +157,7 @@ void Scene::LoadObject(std::string objLine)
 void Scene::loadWorldFile(std::string worldfile)
 {
     objects.clear();
+    effects.clear();
     std::ifstream file(worldfile);
     // open files
     if (file.is_open())

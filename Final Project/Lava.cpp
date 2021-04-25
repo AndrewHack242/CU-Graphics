@@ -1,6 +1,5 @@
 #include "Lava.h"
 
-
 void Lava::VAOInit()
 {
      float w = 1;
@@ -68,14 +67,36 @@ void Lava::VAOInit()
     //glVertexAttribPointer(1, 3, GL_FLOAT, 0, 52, (void *)16); // Normal
     glVertexAttribPointer(2, 4, GL_FLOAT, 0, 40, (void *)16); // Color
     glVertexAttribPointer(3, 2, GL_FLOAT, 0, 40, (void *)32); // Textures
+
+    glBindVertexArray(0);
     
    ShaderHandler::disableShaders();
+}
+
+void Lava::InitPart(void)
+{
+    for (int i = 0; i < PCount; i++)
+    {
+        p[i] = LavaParticle(pos + glm::vec3(1.0,1.0,1.0), glm::vec3(1), glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,-1,0));
+    }
+}
+
+void Lava::DrawPart(void)
+{
+    for (int i = 0; i < PCount; i++)
+    {
+        p[i].draw();
+    }
 }
 
 Lava::Lava(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot) : Object(pos, scale, rot)
 { 
     textures.push_back(TextureHandler::LoadTexture("Textures/crate.bmp",false)); //load the texture for this Lava
+    textures.push_back(TextureHandler::LoadTexture("Textures/particle.bmp",true));
     ShaderHandler::LoadShader("Lava","Shaders/Lava.vert","Shaders/Lava.frag");
+    //ShaderHandler::LoadAttrShader("LavaParticle","Shaders/lavaparticle.vert","",Name);
+    ShaderHandler::LoadShader("LavaParticle","Shaders/lavaparticle.vert","Shaders/lavaparticle.frag");
+    InitPart();
     VAOInit();
 }
 
@@ -87,14 +108,18 @@ void Lava::drawObject()
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D,textures[0]);
-
-    //glPatchParameteri(GL_PATCH_VERTICES, 3);
     
     //  Bind VAO and render
-   glBindVertexArray(vao);
-   glDrawElements(GL_TRIANGLES, N, GL_UNSIGNED_INT, 0);
-
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, N, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    ShaderHandler::useShader("LavaParticle");
+    //glBindTexture(GL_TEXTURE_2D,textures[1]);
+    DrawPart();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    ErrCheck("particles");
 
     glDisable(GL_TEXTURE_2D);
     ShaderHandler::disableShaders();

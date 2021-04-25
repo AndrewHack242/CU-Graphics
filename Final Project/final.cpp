@@ -40,7 +40,6 @@ void display(GLFWwindow *window)
    //  Enable Z-buffering in OpenGL
    glEnable(GL_DEPTH_TEST);
 
-   //TODO: re-enable when done
    glEnable(GL_CULL_FACE);
 
    //TODO: move lighting to its own handler FIX THE LIGHT SO THAT IT ISN'T DRAWN INCORRECTLY
