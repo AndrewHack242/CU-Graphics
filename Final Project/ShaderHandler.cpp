@@ -163,7 +163,7 @@ namespace ShaderHandler
         glUseProgram(active);
     }
 
-    void updateViewMatrix(glm::mat4 view)
+    void updateViewMatrix(glm::mat4 view, glm::vec3 pos)
     {
         for (auto const &x : shaders)
         {
@@ -171,6 +171,8 @@ namespace ShaderHandler
             glUseProgram(val);
             int id = glGetUniformLocation(val, "ViewMatrix");
             glUniformMatrix4fv(id, 1, 0, &view[0][0]);
+            id = glGetUniformLocation(val, "camPos");
+            glUniform3fv(id, 1, &pos[0]);
         }
         glUseProgram(active);
     }

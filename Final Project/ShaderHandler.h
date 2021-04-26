@@ -19,7 +19,7 @@ namespace ShaderHandler
     unsigned int LoadAttrShader(std::string name, std::string vert, std::string frag, std::string attr[]);
 
     void updateProjMatrix(glm::mat4 proj);
-    void updateViewMatrix(glm::mat4 view);
+    void updateViewMatrix(glm::mat4 view, glm::vec3 pos);
     void updateModelMatrix(glm::mat4 model);
     void updateLightInfo(glm::vec4 global, glm::vec4 ambient, glm::vec4 diffuse, glm::vec4 specular, glm::vec4 position, glm::vec4 lightcolor);
     void updateFOV(float fov);

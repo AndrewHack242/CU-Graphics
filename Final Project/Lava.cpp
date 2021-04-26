@@ -98,9 +98,8 @@ Lava::~Lava()
 
 void Lava::drawObject()
 {
-    //std::cout<< "test" << std::endl;
     ShaderHandler::useShader("Lava");
-    //std::cout<< "test" << std::endl;
+
     glEnable(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D,textures[0]);

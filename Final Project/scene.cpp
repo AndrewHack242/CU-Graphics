@@ -150,7 +150,7 @@ void Scene::LoadObject(std::string objLine)
     }
     else if (objName == "Shimmer")
     {
-        effects.push_back(new Shimmer(position, scale, rotation));
+        effects.push_back(new ShimmerParticle(position, scale, rotation, glm::vec3(0), glm::vec3(0)));
     }
 }
 

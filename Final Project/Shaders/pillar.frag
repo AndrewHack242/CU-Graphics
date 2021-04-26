@@ -30,7 +30,7 @@ mat4 ModelViewMatrix;
 vec4 phong()
 {
    //  P is the vertex coordinate on body
-   vec3 P = vec3(ModelViewMatrix * fragpos);
+   vec3 P = vec3(ViewMatrix * fragpos);
    //  N is the object normal at P
    vec3 N = normalize(gFacetNormal);
    //  L is the light vector
@@ -52,7 +52,7 @@ vec4 phong()
       //  Specular is cosine of reflected and view vectors
       //  Assert material specular color is white
       float Is = dot(R,V);
-      if (Is>0.0) color += pow(Is,8.0)*Specular*LightColor;
+      if (Is>0.0) color += pow(Is,4.0)*Specular*LightColor;
    }
 
    //  Return sum of color components
@@ -71,5 +71,5 @@ void main()
     
  
     //FragColor = vec4(color.xyz, 1.0);
-    FragColor = phong() * texture2D(tex,TexCoord);
+    FragColor = 0.7*phong() * texture2D(tex,TexCoord);
 }

@@ -60,21 +60,14 @@ void Shimmer::VAOInit()
    
 
     glEnableVertexAttribArray(0); // Vertex
-    //glEnableVertexAttribArray(1); // Normal
-    //glEnableVertexAttribArray(2); // Color
-    //glEnableVertexAttribArray(3); // Textures
     
     glVertexAttribPointer(0, 4, GL_FLOAT, 0, 40, (void *)0);  // Vertex
-    //glVertexAttribPointer(1, 3, GL_FLOAT, 0, 52, (void *)16); // Normal
-    //glVertexAttribPointer(2, 4, GL_FLOAT, 0, 40, (void *)16); // Color
-    //glVertexAttribPointer(3, 2, GL_FLOAT, 0, 40, (void *)32); // Textures
     
    ShaderHandler::disableShaders();
 }
 
 Shimmer::Shimmer(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot) : Object(pos, scale, rot)
 { 
-    //textures.push_back(TextureHandler::LoadTexture("Textures/crate.bmp",false)); //load the texture for this Shimmer
     ShaderHandler::LoadShader("Shimmer","Shaders/Shimmer.vert","Shaders/Shimmer.frag");
     VAOInit();
 }

@@ -83,7 +83,7 @@ void display(GLFWwindow *window)
    view = glm::lookAt(pos, pos + lapos, glm::vec3(0.0f, 1.0f, 0.0f));
    //model = glm::rotate(model, glm::radians((float)37), glm::vec3(0.0f, 1.0f, 0.0f));
    ShaderHandler::updateProjMatrix(proj);
-   ShaderHandler::updateViewMatrix(view);
+   ShaderHandler::updateViewMatrix(view, pos);
 
    scene.drawScene();
 

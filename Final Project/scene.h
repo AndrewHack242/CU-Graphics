@@ -16,6 +16,7 @@
 #include "Lava.h"
 #include "Floor.h"
 #include "Shimmer.h"
+#include "ShimmerParticle.h"
 
 class Scene
 {
