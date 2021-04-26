@@ -36,3 +36,8 @@ void Object::VAOInit()
 {
     std::cout << "an object does not have a VBOInit() function." << std::endl;
 }
+
+void Object::updatePos(glm::vec3 newpos)
+{
+    pos = newpos;
+}

@@ -11,7 +11,7 @@ void LavaParticle::VAOInit()
        {
           // X  Y  Z  W    R G B A  
             //  Face
-            0,0,0,1,   1,1,0,1
+            0,0,0,1,   0.988,0.973,0.482,1
 
 
            };
@@ -56,31 +56,50 @@ LavaParticle::LavaParticle(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::v
     textures.push_back(TextureHandler::LoadTexture("Textures/particle.bmp",true));
     //ShaderHandler::LoadAttrShader("LavaParticle","Shaders/lavaparticle.vert","",Name);
     ShaderHandler::LoadShader("LavaParticle","Shaders/lavaparticle.vert","Shaders/lavaparticle.frag");
-    vel = initialv;
+    float vx,vy,vz;
+    vx = ((rand() % 1000)/ 2000.0) - 0.25;
+    vy = ((rand() % 1000)/ 4000.0) - 0.125;
+    vz = ((rand() % 1000)/ 2000.0) - 0.25;
+    vel = initialv + glm::vec3(vx,vy,vz);
     acc = acceleration;
     starttime = glfwGetTime();
+    timemod = (rand() % 2000) / 1000.0;
     VAOInit();
+}
+
+void LavaParticle::respawn(glm::vec3 newpos)
+{
+    updatePos(newpos);
+    starttime = glfwGetTime();
+    float vx,vy,vz;
+    vx = ((rand() % 1000)/ 2000.0) - 0.25;
+    vy = ((rand() % 1000)/ 4000.0) - 0.125;
+    vz = ((rand() % 1000)/ 2000.0) - 0.25;
+    vel = vel + glm::vec3(vx,vy,vz);
+    timemod = (rand() % 2000) / 1000.0;
+}
+
+bool LavaParticle::checkLife()
+{
+    if((glfwGetTime() - starttime) >= (3 + timemod))
+    {
+        return true;
+    }
+    return false;
 }
 
 void LavaParticle::drawObject()
 {
-    glPointSize(10);
-    ErrCheck("particles0");
+    glPointSize(7);
     //std::cout<< "test" << std::endl;
     ShaderHandler::useShader("LavaParticle");
-    ErrCheck("particles0.5");
     ShaderHandler::updateParticle("LavaParticle", vel, acc,starttime);
-    ErrCheck("particles1");
     
     //  Bind VAO and render
     glBindVertexArray(vao);
-    ErrCheck("particles why");
     glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, 0);
-    ErrCheck("particles no you");
     glBindVertexArray(0);
-    ErrCheck("particles fuck this");
     glBindTexture(GL_TEXTURE_2D, 0);
-    ErrCheck("particles2");
     //glDisable(GL_TEXTURE_2D);
     ShaderHandler::disableShaders();
 }

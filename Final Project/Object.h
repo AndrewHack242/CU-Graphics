@@ -21,6 +21,8 @@ public:
 
     void draw();
 
+    void updatePos(glm::vec3 newpos);
+
 protected:
     virtual void drawObject();
     virtual void VAOInit();

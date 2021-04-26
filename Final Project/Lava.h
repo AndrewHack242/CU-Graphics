@@ -3,12 +3,12 @@
 #include "Object.h"
 #include "LavaParticle.h"
 
-#define PCount 5
 
 class Lava : public Object
 {
 public:
     Lava(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot);
+    ~Lava();
 
 protected:
     virtual void drawObject();
@@ -20,5 +20,7 @@ protected:
     unsigned int vao;
     int N;
 
-    LavaParticle p[PCount];
+    int PCount;
+
+    LavaParticle *p;
 };

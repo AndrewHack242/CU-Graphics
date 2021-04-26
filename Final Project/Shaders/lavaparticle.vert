@@ -23,7 +23,7 @@ void main(void)
       //construct Model-View Matrix
    mat4 ModelViewMatrix = ViewMatrix * ModelMatrix;
    //  Transform particle location
-   vec4 pos = Vertex + (time * vec4(velocity,0.0)) + (0.5 * vec4(acceleration,0.0) * pow(time-starttime,2));
+   vec4 pos = Vertex + ((time-starttime) * vec4(velocity,0.0)) + (0.5 * vec4(acceleration,0.0) * pow(time-starttime,2));
    color = Color;
    gl_Position = ProjectionMatrix * ModelViewMatrix * pos;
 }

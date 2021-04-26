@@ -7,34 +7,15 @@ void Lava::VAOInit()
            const int Faces[] =
        {
            0,1,2, 3,0,2,
-           2,4,3, 5,4,2,
-           4,5,6, 7,4,6,
-           6,0,7, 1,0,6,
-           8,9,10, 8,10,11,
-           12,14,13, 12,15,14
            };
    const float Verts[] =
        {
           // X  Y  Z  W    R G B A   s t
             //  Face
-            +w,+1,+w,+1,   1,1,1,1,  1,1, //0
-            +w,-1,+w,+1,   1,1,1,1,  0,1, //1
-            +w,-1,-w,+1,   1,1,1,1,  1,0, //2
-            +w,+1,-w,+1,   1,1,1,1,  0,0, //3
-            -w,+1,-w,+1,   1,1,1,1,  1,1, //4
-            -w,-1,-w,+1,   1,1,1,1,  0,1, //5
-            -w,-1,+w,+1,   1,1,1,1,  1,0, //6
-            -w,+1,+w,+1,   1,1,1,1,  0,0, //7
-
-            +w,+1,+w,+1,   1,1,1,1,  1,1, //8
-            +w,+1,-w,+1,   1,1,1,1,  0,1, //9
-            -w,+1,-w,+1,   1,1,1,1,  1,0, //10
-            -w,+1,+w,+1,   1,1,1,1,  0,0, //11
-
-            +w,-1,+w,+1,   1,1,1,1,  1,1, //12
-            +w,-1,-w,+1,   1,1,1,1,  0,1, //13
-            -w,-1,-w,+1,   1,1,1,1,  1,0, //14
-            -w,-1,+w,+1,   1,1,1,1,  0,0, //15
+            +w, 0,+w,+1,   1,1,1,1,  1,1, //0
+            +w, 0,-w,+1,   1,1,1,1,  0,1, //1
+            -w, 0,-w,+1,   1,1,1,1,  1,0, //2
+            -w, 0,+w,+1,   1,1,1,1,  0,0, //3
 
 
            };
@@ -77,7 +58,10 @@ void Lava::InitPart(void)
 {
     for (int i = 0; i < PCount; i++)
     {
-        p[i] = LavaParticle(pos + glm::vec3(1.0,1.0,1.0), glm::vec3(1), glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,-1,0));
+        float rx,rz;
+        rx = ((rand() %((int)s.x * 2000)) / 1000.0) - s.x; //gets a point somewhere in the lava pool
+        rz = ((rand() %((int)s.z * 2000)) / 1000.0) - s.z;
+        p[i] = LavaParticle(pos + glm::vec3(rx,0,rz), glm::vec3(1), glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,-1,0));
     }
 }
 
@@ -85,6 +69,13 @@ void Lava::DrawPart(void)
 {
     for (int i = 0; i < PCount; i++)
     {
+        if(p[i].checkLife())
+        {
+            float rx,rz;
+            rx = ((rand() %((int)s.x * 2000)) / 1000.0) - s.x; //gets a point somewhere in the lava pool
+            rz = ((rand() %((int)s.z * 2000)) / 1000.0) - s.z;
+            p[i].respawn(pos + glm::vec3(rx,0,rz));
+        }
         p[i].draw();
     }
 }
@@ -94,10 +85,15 @@ Lava::Lava(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot) : Object(pos, scale, r
     textures.push_back(TextureHandler::LoadTexture("Textures/crate.bmp",false)); //load the texture for this Lava
     textures.push_back(TextureHandler::LoadTexture("Textures/particle.bmp",true));
     ShaderHandler::LoadShader("Lava","Shaders/Lava.vert","Shaders/Lava.frag");
-    //ShaderHandler::LoadAttrShader("LavaParticle","Shaders/lavaparticle.vert","",Name);
     ShaderHandler::LoadShader("LavaParticle","Shaders/lavaparticle.vert","Shaders/lavaparticle.frag");
+    PCount = s.x * s.z;
+    p = new LavaParticle[PCount];
     InitPart();
     VAOInit();
+}
+Lava::~Lava()
+{
+    delete[] p;
 }
 
 void Lava::drawObject()
