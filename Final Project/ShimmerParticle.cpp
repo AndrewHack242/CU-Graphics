@@ -57,9 +57,9 @@ ShimmerParticle::ShimmerParticle(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, 
     //ShaderHandler::LoadAttrShader("ShimmerParticle","Shaders/Shimmerparticle.vert","",Name);
     ShaderHandler::LoadGeomShader("ShimmerParticle","Shaders/ShimmerParticle.vert","Shaders/ShimmerParticle.geom","Shaders/ShimmerParticle.frag"); //change shaders
     float vx,vy,vz;
-    vx = ((rand() % 1000)/ 2000.0) - 0.25;
-    vy = ((rand() % 1000)/ 4000.0) - 0.125;
-    vz = ((rand() % 1000)/ 2000.0) - 0.25;
+    vx = ((rand() % 1000)/ 4000.0) - 0.125;
+    vy = ((rand() % 1000)/ 2000.0) - 0.25;
+    vz = ((rand() % 1000)/ 4000.0) - 0.125;
     vel = initialv + glm::vec3(vx,vy,vz);
     acc = acceleration;
     starttime = glfwGetTime();

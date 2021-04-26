@@ -7,7 +7,7 @@
 #extension GL_EXT_geometry_shader4 : enable
 layout(points) in;
 layout(triangle_strip,max_vertices=256) out;
-float size = 0.1;
+float size = 0.2;
 
 
 //  Transformation matrices
@@ -15,7 +15,15 @@ uniform mat4 ProjectionMatrix;
 uniform mat4 ViewMatrix;
 uniform mat4 ModelMatrix;
 
+
+uniform float time;
+uniform float starttime;
+uniform vec3 velocity;
+uniform vec3 acceleration;
+
 out vec4 Color;
+
+vec4 adjpos;
 
 mat4 ModelViewMatrix;
 
@@ -24,6 +32,7 @@ float gr = (1.0 + sqrt(5))/2;
 void setPoint(vec3 pos)
 {
    pos *= size;
+   pos += vec3(adjpos);
    gl_Position = ProjectionMatrix * ModelViewMatrix * vec4(pos,1);
    EmitVertex();
 }
@@ -113,6 +122,7 @@ void Icosahedron()
 void main()
 {
    ModelViewMatrix = ViewMatrix * ModelMatrix;
+   adjpos = ((time-starttime) * vec4(velocity,0.0)) + (0.5 * vec4(acceleration,0.0) * pow(time-starttime,2));
    //  Copy Color
    Color  = gl_FrontColorIn[0];
    Icosahedron();

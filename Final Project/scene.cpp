@@ -147,10 +147,12 @@ void Scene::LoadObject(std::string objLine)
     else if (objName == "Lava")
     {
         objects.push_back(new Lava(position, scale, rotation));
+        effects.push_back(new ShimmerSpawner(position, scale, rotation));
+        effects.push_back(new Shimmer(position + glm::vec3(0,0.1,0), glm::vec3(scale.x, 0.2 , scale.z), rotation));
     }
     else if (objName == "Shimmer")
     {
-        effects.push_back(new ShimmerParticle(position, scale, rotation, glm::vec3(0), glm::vec3(0)));
+        effects.push_back(new Shimmer(position, scale, rotation));
     }
 }
 
