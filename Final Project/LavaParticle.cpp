@@ -90,7 +90,7 @@ bool LavaParticle::checkLife()
 
 void LavaParticle::drawObject()
 {
-    glPointSize(7);
+    glPointSize(4);
     //std::cout<< "test" << std::endl;
     ShaderHandler::useShader("LavaParticle");
     ShaderHandler::updateParticle("LavaParticle", vel, acc,starttime);

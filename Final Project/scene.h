@@ -17,6 +17,8 @@
 #include "Floor.h"
 #include "Shimmer.h"
 #include "ShimmerSpawner.h"
+#include "Dome.h"
+#include "TSurface.h"
 
 class Scene
 {

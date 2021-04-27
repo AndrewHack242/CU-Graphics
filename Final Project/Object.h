@@ -9,6 +9,7 @@
 #include "TextureHandler.h"
 #include "ShaderHandler.h"
 
+glm::vec3 RotateY(glm::vec3 dis, float deg);
 class Object
 {
 public:

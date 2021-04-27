@@ -1,5 +1,12 @@
 #include "Object.h"
 
+
+glm::vec3 RotateY(glm::vec3 dis, float deg)
+{
+    glm::vec3 pivot = glm::vec3(0,1,0);
+    return dis * (float)Cos(deg) + (glm::cross(pivot,dis)) * (float)Sin(deg) + pivot * (glm::dot(pivot,dis) * (1 - (float)Cos(deg)));
+}
+
 Object::Object()
 {
 }

@@ -15,6 +15,7 @@ layout(location = 3) in vec2 Texture;
 out vec4 FrontColor;
 out vec2 Texcoord;
 out vec4 fragpos;
+out vec4 vert;
 out vec3 norm;
 
 
@@ -29,6 +30,7 @@ void main()
    Texcoord = Texture;
    fragpos = ModelMatrix * Vertex;
    norm = Normal;
+   vert = Vertex;
    //  Set transformed vertex location
    gl_Position =  ProjectionMatrix * ModelViewMatrix * Vertex;
 }

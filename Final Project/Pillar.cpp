@@ -76,8 +76,8 @@ void Pillar::VAOInit()
 }
 
 Pillar::Pillar(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot) : Object(pos, scale, rot)
-{ //TODO: add texture
-    textures.push_back(TextureHandler::LoadTexture("Textures/stone.bmp",false)); //load the texture for this Pillar
+{
+    textures.push_back(TextureHandler::LoadTexture("Textures/stone2.bmp",false)); //load the texture for this Pillar
     ShaderHandler::LoadTesShader("pillar","Shaders/pillar.vert","Shaders/pillar.tesc","Shaders/pillar.tese","Shaders/pillar.geom","Shaders/pillar.frag");
     VAOInit();
 }

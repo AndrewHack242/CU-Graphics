@@ -61,7 +61,11 @@ void Lava::InitPart(void)
         float rx,rz;
         rx = ((rand() %((int)s.x * 2000)) / 1000.0) - s.x; //gets a point somewhere in the lava pool
         rz = ((rand() %((int)s.z * 2000)) / 1000.0) - s.z;
-        p[i] = LavaParticle(pos + glm::vec3(rx,0,rz), glm::vec3(1), glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,-1,0));
+
+            glm::vec3 tmp = glm::vec3(rx,0,rz);
+            tmp = RotateY(tmp, rot.y);
+
+        p[i] = LavaParticle(pos + tmp, glm::vec3(1), glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,-1,0));
     }
 }
 
@@ -74,7 +78,11 @@ void Lava::DrawPart(void)
             float rx,rz;
             rx = ((rand() %((int)s.x * 2000)) / 1000.0) - s.x; //gets a point somewhere in the lava pool
             rz = ((rand() %((int)s.z * 2000)) / 1000.0) - s.z;
-            p[i].respawn(pos + glm::vec3(rx,0,rz));
+
+            glm::vec3 tmp = glm::vec3(rx,0,rz);
+            tmp = RotateY(tmp, rot.y);
+
+            p[i].respawn(pos + tmp);
         }
         p[i].draw();
     }

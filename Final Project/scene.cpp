@@ -131,6 +131,9 @@ void Scene::LoadObject(std::string objLine)
     if (objName == "Surface")
     {
         objects.push_back(new Surface(position, scale, rotation, texturePath, hasAlpha));
+    }if (objName == "TSurface")
+    {
+        objects.push_back(new TSurface(position, scale, rotation, texturePath, hasAlpha));
     }
     else if (objName == "Floor")
     {
@@ -153,6 +156,10 @@ void Scene::LoadObject(std::string objLine)
     else if (objName == "Shimmer")
     {
         effects.push_back(new Shimmer(position, scale, rotation));
+    }
+    else if (objName == "Dome")
+    {
+        objects.push_back(new Dome(position, scale, rotation));
     }
 }
 

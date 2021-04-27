@@ -21,7 +21,7 @@ glm::vec3 pos;
 int fov = 57;   //  Field of view (for perspective)
 int tex = 0;    //  Texture
 int obj = 0;    //  Object
-float YL = 1.5; //  Light elevation
+float XL = 0, YL = 3.5, ZL = 0; //  Light elevation
 float asp = 1;  //  Aspect ratio
 float dim = 4;  //  Size of world
 const char *text[] = {"OpenGL 2", "OpenGL 4"};
@@ -49,7 +49,7 @@ void display(GLFWwindow *window)
    glm::vec4 ambient = {0.3, 0.3, 0.3, 1.0};
    glm::vec4 diffuse = {0.8, 0.8, 0.8, 1.0};
    glm::vec4 specular = {1.0, 1.0, 1.0, 1.0};
-   glm::vec4 lightposition = {(float)(3 * Cos(zh)), YL, (float)(3 * Sin(zh)), 1.0};
+   glm::vec4 lightposition = {(float)(XL + 5 * Cos(zh)), YL, (float)(ZL + 5 * Sin(zh)), 1.0};
    glm::vec4 lightcolor = {1.0, 1.0, 1.0, 1.0};
 
    //  Set light property uniforms
@@ -137,12 +137,6 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
    //  Exit on ESC
    if (key == GLFW_KEY_ESCAPE)
       glfwSetWindowShouldClose(window, 1);
-   //  Reset view angle and location
-   else if (key == GLFW_KEY_0)
-      th = ph = 0;
-   //  Light movement
-   else if (key == GLFW_KEY_L)
-      mov = 1 - mov;
    //  Light elevation
    else if (key == GLFW_KEY_KP_SUBTRACT || key == GLFW_KEY_MINUS)
       YL -= 0.05;
@@ -175,6 +169,12 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
       move(glm::vec3(-1, 0, 0));
    else if (key == GLFW_KEY_D)
       move(glm::vec3(0, 0, 1));
+   else if (key == GLFW_KEY_L)
+   {
+      XL = pos.x;
+      YL = pos.y;
+      ZL = pos.z;
+   }
    else if (key == GLFW_KEY_SPACE)
       move(glm::vec3(0, 1, 0));
    else if (key == GLFW_KEY_LEFT_CONTROL)

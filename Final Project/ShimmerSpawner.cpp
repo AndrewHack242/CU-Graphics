@@ -13,7 +13,10 @@ void ShimmerSpawner::InitPart(void)
         rx = ((rand() %((int)s.x * 2000)) / 1000.0) - s.x; //gets a point somewhere in the ShimmerSpawner pool
         ry = -0.3;
         rz = ((rand() %((int)s.z * 2000)) / 1000.0) - s.z;
-        sp[i] = ShimmerParticle(pos + glm::vec3(rx,ry,rz), glm::vec3(1), glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,0,0));
+
+        glm::vec3 tmp = glm::vec3(rx,ry,rz);
+        tmp = RotateY(tmp, rot.y);
+        sp[i] = ShimmerParticle(pos + tmp, glm::vec3(1), glm::vec3(0), glm::vec3(0,1,0), glm::vec3(0,0,0));
     }
 }
 
@@ -27,7 +30,10 @@ void ShimmerSpawner::DrawPart(void)
             rx = ((rand() %((int)s.x * 2000)) / 1000.0) - s.x; //gets a point somewhere in the ShimmerSpawner pool
             ry = -0.3;
             rz = ((rand() %((int)s.z * 2000)) / 1000.0) - s.z;
-            sp[i].respawn(pos + glm::vec3(rx,ry,rz));
+
+            glm::vec3 tmp = glm::vec3(rx,ry,rz);
+            tmp = RotateY(tmp, rot.y);
+            sp[i].respawn(pos + tmp);
         }
         sp[i].draw();
     }

@@ -48,7 +48,7 @@ vec4 phong()
    //  Emission and ambient color
    vec4 color = ((Global+Ambient)*LightColor)*vec4(1.0);
    //diffuse
-   color = color + (max(dot(N, L), 0.0) *1.1 * LightColor);
+   color = color + (max(dot(N, L), 0.0) * LightColor);
    //specular
    color = color + (Specular * pow(max(dot(viewDir, reflectDir), 0.0), 32) * LightColor);
 
@@ -58,6 +58,10 @@ vec4 phong()
 
 void main()
 {
+   if(length(vec3(vert)) < 0.98)
+   {
+      discard;
+   }
    vec4 FrontColor;
    //construct Normal Matrix
    NormalMatrix = mat3(transpose(inverse(ModelMatrix)));

@@ -1,12 +1,12 @@
-#include "Floor.h"
+#include "TSurface.h"
 
 
-void Floor::VAOInit()
+void TSurface::VAOInit()
 {
     unsigned int verts, faces;
            const int Faces[] =
        {
-           0,2,1, 1,2,3 
+           0,2,1//, 1,2,3 
            };
    const float Verts[] =
        {
@@ -46,17 +46,19 @@ void Floor::VAOInit()
     glVertexAttribPointer(1, 3, GL_FLOAT, 0, 52, (void *)16); // Normal
     glVertexAttribPointer(2, 4, GL_FLOAT, 0, 52, (void *)28); // Color
     glVertexAttribPointer(3, 2, GL_FLOAT, 0, 52, (void *)44); // Textures
+
+    ErrCheck("VBOInit:5");
    ShaderHandler::disableShaders();
 }
 
-Floor::Floor(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha) : Object(pos, scale, rot)
+TSurface::TSurface(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, std::string tex, bool hasAlpha) : Object(pos, scale, rot)
 {
-    textures.push_back(TextureHandler::LoadTexture(tex,hasAlpha)); //load the texture for this Floor
+    textures.push_back(TextureHandler::LoadTexture(tex,hasAlpha)); //load the texture for this TSurface
     ShaderHandler::LoadShader("gl4","Shaders/gl4.vert","Shaders/gl4.frag");
     VAOInit();
 }
 
-void Floor::drawObject()
+void TSurface::drawObject()
 {
     ShaderHandler::useShader("gl4");
     glEnable(GL_TEXTURE_2D);
@@ -66,7 +68,6 @@ void Floor::drawObject()
     //  Bind VAO and render
    glBindVertexArray(vao);
    glDrawElements(GL_TRIANGLES, N, GL_UNSIGNED_INT, 0);
-   glBindVertexArray(0);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
