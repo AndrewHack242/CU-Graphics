@@ -52,7 +52,7 @@ vec4 phong()
       //  Specular is cosine of reflected and view vectors
       //  Assert material specular color is white
       float Is = dot(R,V);
-      if (Is>0.0) color += pow(Is,4.0)*Specular*LightColor;
+      if (Is>0.0) color += pow(Is,16.0)*Specular*LightColor;
    }
 
    //  Return sum of color components

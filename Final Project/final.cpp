@@ -46,11 +46,13 @@ void display(GLFWwindow *window)
 
    //  Lighting parameters
    glm::vec4 global = {0.1, 0.1, 0.1, 1.0};
-   glm::vec4 ambient = {0.3, 0.3, 0.3, 1.0};
+   glm::vec4 ambient = {0.2, 0.2, 0.2, 1.0};
    glm::vec4 diffuse = {0.8, 0.8, 0.8, 1.0};
-   glm::vec4 specular = {1.0, 1.0, 1.0, 1.0};
+   glm::vec4 specular = {0.9, 0.9, 0.9, 1.0};
    glm::vec4 lightposition = {(float)(XL + 5 * Cos(zh)), YL, (float)(ZL + 5 * Sin(zh)), 1.0};
-   glm::vec4 lightcolor = {1.0, 1.0, 1.0, 1.0};
+   glm::vec4 lightcolor = {1,0.95,0.78, 1.0};
+
+   //glm::vec4 lightcolor = {1.0, 0.85, 0.75, 1.0};
 
    //  Set light property uniforms
    ShaderHandler::updateLightInfo(global, ambient, diffuse, specular, lightposition, lightcolor);

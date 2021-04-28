@@ -139,10 +139,6 @@ void Scene::LoadObject(std::string objLine)
     {
         objects.push_back(new Floor(position, scale, rotation, texturePath, hasAlpha));
     }
-    else if (objName == "Ring")
-    {
-        objects.push_back(new Ring(position, scale, rotation));
-    }
     else if (objName == "Pillar")
     {
         objects.push_back(new Pillar(position, scale, rotation));

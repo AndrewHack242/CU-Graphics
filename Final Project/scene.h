@@ -11,7 +11,6 @@
 //#include "Camera.h"
 
 #include "surface.h"
-#include "Ring.h"
 #include "Pillar.h"
 #include "Lava.h"
 #include "Floor.h"

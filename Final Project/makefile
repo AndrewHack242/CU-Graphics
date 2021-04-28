@@ -30,7 +30,6 @@ Object.o: Object.cpp Object.h
 TextureHandler.o: TextureHandler.cpp TextureHandler.h
 ShaderHandler.o: ShaderHandler.cpp ShaderHandler.h
 surface.o: surface.cpp surface.h
-Ring.o: Ring.cpp Ring.h
 Pillar.o: Pillar.cpp Pillar.h
 Lava.o: Lava.cpp Lava.h
 Floor.o: Floor.cpp Floor.h
@@ -75,7 +74,7 @@ CSCIx239.a:fatal.o errcheck.o print.o axes.o loadtexbmp.o loadobj.o projection.o
 	g++ -c $(CFLG)  $<
 
 #  Link
-final:final.o scene.o Object.o TextureHandler.o ShaderHandler.o surface.o Floor.o Ring.o Pillar.o Lava.o Shimmer.o LavaParticle.o ShimmerParticle.o ShimmerSpawner.o Dome.o TSurface.o CSCIx239.a
+final:final.o scene.o Object.o TextureHandler.o ShaderHandler.o surface.o Floor.o Pillar.o Lava.o Shimmer.o LavaParticle.o ShimmerParticle.o ShimmerSpawner.o Dome.o TSurface.o CSCIx239.a
 	g++ -O3 -o $@ $^  $(LIBS)
 
 #  Clean

@@ -48,7 +48,7 @@ vec4 phong()
    //  Emission and ambient color
    vec4 color = ((Global+Ambient)*LightColor)*vec4(1.0);
    //diffuse
-   color = color + (max(dot(N, L), 0.0) *1.1 * LightColor);
+   color = color + (max(dot(N, L), 0.0) * Diffuse * LightColor);
    //specular
    color = color + (Specular * pow(max(dot(viewDir, reflectDir), 0.0), 32) * LightColor);
 
