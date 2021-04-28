@@ -197,8 +197,8 @@ int main(int argc, char *argv[])
    //  Initialize GLFW
    GLFWwindow *window = InitWindow("Final Project: Andrew Hack", 1, 900, 900, &reshape, &key);
 
-   pos = glm::vec3(0, 0, 3);
-   th = -90;
+   pos = glm::vec3(13.540445,3.610091,-5.008947);
+   th = 160;
    ph = 0;
    scene = Scene("scene.txt");
 
