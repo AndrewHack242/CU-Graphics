@@ -18,8 +18,6 @@ out vec4 FragColor;
 const int r = 2;
 float blurdiv = 1.0/((r*2 + 1)*(r*2 + 1));
 
-vec2 dres = {900,900};
-
 //use int to pass offset data
 //get current pixel with offset, blur with surrounding pixels - gl_FragCoord
 
@@ -50,7 +48,7 @@ void main()
 	int x = 0, y = 0;
 	x = int(factor * sin(mod1 * (gl_FragCoord.x/ resolution) * (sin(time) + mod2) * PI));
 	y = int(factor * sin(mod1 * (gl_FragCoord.y/ resolution) * (cos(time*0.85) + mod2) * PI));;
-	vec4 color = blurpixel(x,y);
+ 	vec4 color = blurpixel(x,y);
 
 	FragColor = color;
 }
