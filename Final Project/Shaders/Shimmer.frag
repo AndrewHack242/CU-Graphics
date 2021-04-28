@@ -27,11 +27,6 @@ vec4 pixel(float dx,float dy)
 	return texture2D(screenTex,pos); //get pixel
 }
 
-vec4 blur(int dx, int dy)
-{
-	return pixel(dx * dX,dy * dY); //blurmap[dx + 2][dy + 2] * 
-}
-
 vec4 blurpixel(int dx,int dy)
 {
 	vec4 color = vec4(0,0,0,0);
@@ -51,8 +46,8 @@ void main()
 	float mod1 = 5;
 	float mod2 = 3;
 	int x = 0, y = 0;
-	x = int(factor * sin(mod1 * (gl_FragCoord.x/ resolution) * (sin(time * 0.9) + mod2) * PI)); //probably needs some tweaking, but good
-	y = int(factor * sin(mod1 * (gl_FragCoord.y/ resolution) * (cos(time*0.75) + mod2) * PI));;
+	x = int(factor * sin(mod1 * (gl_FragCoord.x/ resolution) * (sin(time) + mod2) * PI));
+	y = int(factor * sin(mod1 * (gl_FragCoord.y/ resolution) * (cos(time*0.85) + mod2) * PI));;
 	vec4 color = blurpixel(x,y);
 
 	FragColor = color;

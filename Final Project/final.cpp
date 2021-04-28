@@ -89,15 +89,6 @@ void display(GLFWwindow *window)
 
    scene.drawScene();
 
-   //  Fixed pipeline
-
-   //  Draw axes using fixed pipeline (white)
-   //Axes(2);
-
-   //  Display parameters
-   glColor3f(1, 1, 1);
-   glWindowPos2i(5, 5);
-   Print("Angle=%d,%d  Dim=%.1f Projection=%s Mode=%s", th, ph, dim, fov > 0 ? "Perpective" : "Orthogonal", text[mode]);
    //  Render the scene and make it visible
    ErrCheck("display");
    glFlush();
