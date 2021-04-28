@@ -51,8 +51,8 @@ void main()
 	float mod1 = 5;
 	float mod2 = 3;
 	int x = 0, y = 0;
-	x = int(factor * sin(mod1 * (gl_FragCoord.x/ resolution) * (sin(time * 0.8) + mod2) * PI)); //probably needs some tweaking, but good
-	y = int(factor * sin(mod1 * (gl_FragCoord.y/ resolution) * (cos(time*0.65) + mod2) * PI));;
+	x = int(factor * sin(mod1 * (gl_FragCoord.x/ resolution) * (sin(time * 0.9) + mod2) * PI)); //probably needs some tweaking, but good
+	y = int(factor * sin(mod1 * (gl_FragCoord.y/ resolution) * (cos(time*0.75) + mod2) * PI));;
 	vec4 color = blurpixel(x,y);
 
 	FragColor = color;
