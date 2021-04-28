@@ -22,6 +22,7 @@ Controls:
 -Tesselation: The pillars and domes make use of tesselation to get there smooth shapes.
 The normals are calculated at each tesselated point.
 The domes are simply normalizing the distance of each point, but the pillar uses a quadratic equation to calculate points and calculus to find the normals.
+The specular lighting interacting with these objects is mesmerizing
 
 -Procedural Textures: The lava uses a Procedural texture to produce its liquidy effect.
 

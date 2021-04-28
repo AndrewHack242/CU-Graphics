@@ -53,7 +53,6 @@ LavaParticle::LavaParticle()
 
 LavaParticle::LavaParticle(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::vec3 initialv, glm::vec3 acceleration) : Object(pos, scale, rot)
 { 
-    textures.push_back(TextureHandler::LoadTexture("Textures/particle.bmp",true));
     //ShaderHandler::LoadAttrShader("LavaParticle","Shaders/lavaparticle.vert","",Name);
     ShaderHandler::LoadShader("LavaParticle","Shaders/lavaparticle.vert","Shaders/lavaparticle.frag");
     float vx,vy,vz;

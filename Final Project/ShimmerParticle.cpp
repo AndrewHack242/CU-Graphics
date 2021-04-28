@@ -52,8 +52,7 @@ ShimmerParticle::ShimmerParticle()
 }
 
 ShimmerParticle::ShimmerParticle(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::vec3 initialv, glm::vec3 acceleration) : Object(pos, scale, rot)
-{ 
-    textures.push_back(TextureHandler::LoadTexture("Textures/particle.bmp",true));
+{
     //ShaderHandler::LoadAttrShader("ShimmerParticle","Shaders/Shimmerparticle.vert","",Name);
     ShaderHandler::LoadGeomShader("ShimmerParticle","Shaders/ShimmerParticle.vert","Shaders/ShimmerParticle.geom","Shaders/ShimmerParticle.frag"); //change shaders
     float vx,vy,vz;

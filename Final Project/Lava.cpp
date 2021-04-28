@@ -89,9 +89,7 @@ void Lava::DrawPart(void)
 }
 
 Lava::Lava(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot) : Object(pos, scale, rot)
-{ 
-    textures.push_back(TextureHandler::LoadTexture("Textures/crate.bmp",false)); //load the texture for this Lava
-    textures.push_back(TextureHandler::LoadTexture("Textures/particle.bmp",true));
+{
     ShaderHandler::LoadShader("Lava","Shaders/Lava.vert","Shaders/Lava.frag");
     ShaderHandler::LoadShader("LavaParticle","Shaders/lavaparticle.vert","Shaders/lavaparticle.frag");
     PCount = s.x * s.z;
@@ -109,8 +107,6 @@ void Lava::drawObject()
     ShaderHandler::useShader("Lava");
 
     glEnable(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D,textures[0]);
     
     //  Bind VAO and render
     glBindVertexArray(vao);
