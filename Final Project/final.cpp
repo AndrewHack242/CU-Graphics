@@ -130,19 +130,6 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
    //  Exit on ESC
    if (key == GLFW_KEY_ESCAPE)
       glfwSetWindowShouldClose(window, 1);
-   //  Light elevation
-   else if (key == GLFW_KEY_KP_SUBTRACT || key == GLFW_KEY_MINUS)
-      YL -= 0.05;
-   else if (key == GLFW_KEY_KP_ADD || key == GLFW_KEY_EQUAL)
-      YL += 0.05;
-   // Move light
-   else if (key == GLFW_KEY_RIGHT_BRACKET)
-      zh += 1;
-   else if (key == GLFW_KEY_LEFT_BRACKET)
-      zh -= 1;
-   //  Switch between perspective/orthogonal
-   else if (key == GLFW_KEY_P)
-      fov = fov ? 0 : 57;
    //  Increase/decrease asimuth
    else if (key == GLFW_KEY_RIGHT)
       th += 5;
@@ -172,12 +159,6 @@ void key(GLFWwindow *window, int key, int scancode, int action, int mods)
       move(glm::vec3(0, 1, 0));
    else if (key == GLFW_KEY_LEFT_CONTROL)
       move(glm::vec3(0, -1, 0));
-   //  PageUp key - increase dim
-   else if (key == GLFW_KEY_PAGE_DOWN)
-      dim += 0.1;
-   //  PageDown key - decrease dim
-   else if (key == GLFW_KEY_PAGE_UP && dim > 1)
-      dim -= 0.1;
    //  refresh scene file
    else if (key == GLFW_KEY_R)
       scene.reload();
