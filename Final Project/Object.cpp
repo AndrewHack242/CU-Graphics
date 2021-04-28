@@ -20,8 +20,7 @@ Object::Object(glm::vec3 position, glm::vec3 scale, glm::vec3 rotation)
 
 void Object::draw()
 {
-    //TODO: update all shaders model matrices for use in this object
-    //  Create Model matrix //TODO: calculate model matrix in obj
+    //  Create Model matrix 
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(pos.x, pos.y, pos.z));
     model = glm::rotate(model, glm::radians(rot.x), glm::vec3(1.0, 0.0, 0.0));

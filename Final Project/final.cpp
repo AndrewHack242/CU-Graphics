@@ -42,7 +42,7 @@ void display(GLFWwindow *window)
 
    glEnable(GL_CULL_FACE);
 
-   //TODO: move lighting to its own handler FIX THE LIGHT SO THAT IT ISN'T DRAWN INCORRECTLY
+
 
    //  Lighting parameters
    glm::vec4 global = {0.1, 0.1, 0.1, 1.0};
@@ -66,13 +66,11 @@ void display(GLFWwindow *window)
    View(th, ph, fov, dim, pos.x, pos.y, pos.z); //remove the default pipeline
    ColoredSphere(lightposition[0], lightposition[1], lightposition[2], 0.1, 0, 8, lightcolor.r, lightcolor.g, lightcolor.b, lightcolor.a);
 
-   //  Create Projection matrix //TODO: create window class for this ish
+   //  Create Projection matrix 
    ShaderHandler::updateFOV(fov);
    ShaderHandler::updatePixMan(W,H,dX,dY);
    glm::mat4 proj(1.0f);
    proj = glm::perspective(glm::radians((float)fov), asp, dim / 16, 16 * dim); //mat4perspective(proj , fov,asp,dim/16,16*dim);
-
-   //TODO: move calculations to camera, scene
 
    //  Eye position for perspective
    glm::vec3 lapos;

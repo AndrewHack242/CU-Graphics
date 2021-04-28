@@ -1,5 +1,4 @@
 #include "ShaderHandler.h"
-//TODO: add time as uniform
 namespace ShaderHandler
 {
     namespace
