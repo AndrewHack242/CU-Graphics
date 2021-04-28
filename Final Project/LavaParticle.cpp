@@ -60,7 +60,8 @@ LavaParticle::LavaParticle(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot, glm::v
     vx = ((rand() % 1000)/ 2000.0) - 0.25;
     vy = ((rand() % 1000)/ 4000.0) - 0.125;
     vz = ((rand() % 1000)/ 2000.0) - 0.25;
-    vel = initialv + glm::vec3(vx,vy,vz);
+    veladj = glm::vec3(vx,vy,vz);
+    vel = initialv + veladj;
     acc = acceleration;
     starttime = glfwGetTime();
     timemod = (rand() % 2000) / 1000.0;
@@ -75,7 +76,8 @@ void LavaParticle::respawn(glm::vec3 newpos)
     vx = ((rand() % 1000)/ 2000.0) - 0.25;
     vy = ((rand() % 1000)/ 4000.0) - 0.125;
     vz = ((rand() % 1000)/ 2000.0) - 0.25;
-    vel = vel + glm::vec3(vx,vy,vz);
+    vel = vel -= veladj + glm::vec3(vx,vy,vz);
+    veladj = glm::vec3(vx,vy,vz);
     timemod = (rand() % 2000) / 1000.0;
 }
 

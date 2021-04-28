@@ -15,7 +15,7 @@ protected:
     virtual void drawObject();
     virtual void VAOInit();
 
-    glm::vec3 vel, acc;
+    glm::vec3 vel, acc, veladj;
     float starttime;
     float timemod;
     unsigned int vao;
